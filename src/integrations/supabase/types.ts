@@ -14,16 +14,355 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      applications: {
+        Row: {
+          candidate_id: string
+          created_at: string
+          id: string
+          job_id: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          candidate_id: string
+          created_at?: string
+          id?: string
+          job_id: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          candidate_id?: string
+          created_at?: string
+          id?: string
+          job_id?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "applications_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      evaluations: {
+        Row: {
+          communication_score: number | null
+          created_at: string
+          detailed_feedback: string | null
+          id: string
+          interview_id: string
+          overall_score: number | null
+          recommendation: string | null
+          skill_score: number | null
+          strengths: string[] | null
+          weaknesses: string[] | null
+        }
+        Insert: {
+          communication_score?: number | null
+          created_at?: string
+          detailed_feedback?: string | null
+          id?: string
+          interview_id: string
+          overall_score?: number | null
+          recommendation?: string | null
+          skill_score?: number | null
+          strengths?: string[] | null
+          weaknesses?: string[] | null
+        }
+        Update: {
+          communication_score?: number | null
+          created_at?: string
+          detailed_feedback?: string | null
+          id?: string
+          interview_id?: string
+          overall_score?: number | null
+          recommendation?: string | null
+          skill_score?: number | null
+          strengths?: string[] | null
+          weaknesses?: string[] | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "evaluations_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: true
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interview_strategies: {
+        Row: {
+          core_skills: string[] | null
+          created_at: string
+          difficulty_level: string | null
+          evaluation_focus: string[] | null
+          id: string
+          job_id: string
+          role_type: string | null
+          strategy_notes: string | null
+        }
+        Insert: {
+          core_skills?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          evaluation_focus?: string[] | null
+          id?: string
+          job_id: string
+          role_type?: string | null
+          strategy_notes?: string | null
+        }
+        Update: {
+          core_skills?: string[] | null
+          created_at?: string
+          difficulty_level?: string | null
+          evaluation_focus?: string[] | null
+          id?: string
+          job_id?: string
+          role_type?: string | null
+          strategy_notes?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interview_strategies_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      interviews: {
+        Row: {
+          application_id: string
+          completed_at: string | null
+          id: string
+          started_at: string
+          status: string
+        }
+        Insert: {
+          application_id: string
+          completed_at?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+        }
+        Update: {
+          application_id?: string
+          completed_at?: string | null
+          id?: string
+          started_at?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "interviews_application_id_fkey"
+            columns: ["application_id"]
+            isOneToOne: false
+            referencedRelation: "applications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      jobs: {
+        Row: {
+          additional_criteria: string | null
+          company_name: string | null
+          created_at: string
+          created_by: string
+          description: string
+          education: string | null
+          experience: string | null
+          id: string
+          salary_max: number | null
+          salary_min: number | null
+          skills: string[] | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          additional_criteria?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by: string
+          description: string
+          education?: string | null
+          experience?: string | null
+          id?: string
+          salary_max?: number | null
+          salary_min?: number | null
+          skills?: string[] | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          additional_criteria?: string | null
+          company_name?: string | null
+          created_at?: string
+          created_by?: string
+          description?: string
+          education?: string | null
+          experience?: string | null
+          id?: string
+          salary_max?: number | null
+          salary_min?: number | null
+          skills?: string[] | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          company_name: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          company_name?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      questions: {
+        Row: {
+          created_at: string
+          id: string
+          job_id: string
+          order_index: number
+          question_text: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          job_id: string
+          order_index?: number
+          question_text: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          job_id?: string
+          order_index?: number
+          question_text?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "questions_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      responses: {
+        Row: {
+          answer_text: string
+          created_at: string
+          id: string
+          interview_id: string
+          question_id: string
+        }
+        Insert: {
+          answer_text: string
+          created_at?: string
+          id?: string
+          interview_id: string
+          question_id: string
+        }
+        Update: {
+          answer_text?: string
+          created_at?: string
+          id?: string
+          interview_id?: string
+          question_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "responses_interview_id_fkey"
+            columns: ["interview_id"]
+            isOneToOne: false
+            referencedRelation: "interviews"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "responses_question_id_fkey"
+            columns: ["question_id"]
+            isOneToOne: false
+            referencedRelation: "questions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "company" | "candidate"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +489,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["company", "candidate"],
+    },
   },
 } as const
