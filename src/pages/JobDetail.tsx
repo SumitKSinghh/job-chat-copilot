@@ -49,7 +49,7 @@ export default function JobDetail() {
 
     const { data: apps } = await supabase
       .from("applications")
-      .select("id, status, candidate_id, profiles!inner(full_name, email)")
+      .select("id, status, candidate_id")
       .eq("job_id", jobId!);
 
     if (apps) {
