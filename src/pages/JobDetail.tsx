@@ -55,7 +55,7 @@ export default function JobDetail() {
     if (apps) {
       const candidateList: Candidate[] = [];
       for (const app of apps) {
-        const profile = Array.isArray(app.profiles) ? app.profiles[0] : app.profiles;
+        const { data: profile } = await supabase.from("profiles").select("full_name, email").eq("user_id", app.candidate_id).maybeSingle();
         const { data: interview } = await supabase
           .from("interviews")
           .select("id, status")
