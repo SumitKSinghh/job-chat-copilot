@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import AuthPage from "./pages/Auth";
+import Landing from "./pages/Landing";
 import CandidateHome from "./pages/CandidateHome";
 import CandidateDashboard from "./pages/CandidateDashboard";
 import CompanyDashboard from "./pages/CompanyDashboard";
@@ -29,8 +30,9 @@ function AppRoutes() {
   if (!user) {
     return (
       <Routes>
+        <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<AuthPage />} />
-        <Route path="*" element={<Navigate to="/auth" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
   }
