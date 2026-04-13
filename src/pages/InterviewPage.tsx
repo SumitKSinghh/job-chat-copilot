@@ -135,16 +135,16 @@ export default function InterviewPage() {
       // Update interview status
       await supabase.from("interviews").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", interviewId!);
 
-      // Trigger evaluation
-      try {
-        await supabase.functions.invoke("evaluate-interview", {
-          body: { interviewId },
-        });
-        toast.success("Interview completed! Your responses are being evaluated.");
-      } catch (err) {
+      // Trigger evaluation in background (don't block UI)
+      toast.success("Interview completed! Your responses are being evaluated.");
+      supabase.functions.invoke("evaluate-interview", {
+        body: { interviewId },
+      }).then(() => {
+        setEvaluating(false);
+      }).catch((err) => {
         console.error("Evaluation error:", err);
-      }
-      setEvaluating(false);
+        setEvaluating(false);
+      });
     } else {
       newMessages.push({ role: "ai", content: questions[nextIndex].question_text });
       setMessages(newMessages);
