@@ -42,6 +42,30 @@ export default function JobDetail() {
   const [loading, setLoading] = useState(true);
   const [expandedCandidate, setExpandedCandidate] = useState<string | null>(null);
   const [qaData, setQaData] = useState<Record<string, QA[]>>({});
+  const [rejectTarget, setRejectTarget] = useState<Candidate | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejecting, setRejecting] = useState(false);
+
+  const handleReject = async () => {
+    if (!rejectTarget || !rejectReason.trim()) {
+      toast.error("Please provide a reason");
+      return;
+    }
+    setRejecting(true);
+    const { error } = await supabase
+      .from("applications")
+      .update({ status: "rejected", rejection_reason: rejectReason.trim() })
+      .eq("id", rejectTarget.application_id);
+    setRejecting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Application rejected");
+    setRejectTarget(null);
+    setRejectReason("");
+    fetchData();
+  };
 
   useEffect(() => {
     if (jobId) fetchData();
