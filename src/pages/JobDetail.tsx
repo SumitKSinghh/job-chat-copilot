@@ -225,10 +225,32 @@ export default function JobDetail() {
                           <div className="text-xs text-muted-foreground">Score</div>
                         </div>
                       )}
-                      {getRecBadge(c.recommendation)}
+                      {c.status === "rejected" ? (
+                        <Badge variant="destructive">Rejected</Badge>
+                      ) : (
+                        getRecBadge(c.recommendation)
+                      )}
+                      {c.status !== "rejected" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRejectTarget(c);
+                            setRejectReason("");
+                          }}
+                        >
+                          <Ban className="w-3.5 h-3.5 mr-1" /> Reject
+                        </Button>
+                      )}
                       {expandedCandidate === c.application_id ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                     </div>
                   </div>
+                  {c.status === "rejected" && c.rejection_reason && (
+                    <p className="text-xs text-destructive mt-3 pl-14">
+                      Reason: {c.rejection_reason}
+                    </p>
+                  )}
                 </CardContent>
 
                 {expandedCandidate === c.application_id && (
