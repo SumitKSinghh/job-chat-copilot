@@ -53,7 +53,7 @@ export default function JobDetail() {
 
     const { data: apps } = await supabase
       .from("applications")
-      .select("id, status, candidate_id")
+      .select("id, status, candidate_id, rejection_reason")
       .eq("job_id", jobId!);
 
     if (apps) {
