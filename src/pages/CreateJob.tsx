@@ -24,6 +24,8 @@ export default function CreateJob() {
   const [salaryMax, setSalaryMax] = useState("");
   const [education, setEducation] = useState("");
   const [additionalCriteria, setAdditionalCriteria] = useState("");
+  const [additionalQualifications, setAdditionalQualifications] = useState("");
+  const [interviewInstructions, setInterviewInstructions] = useState("");
   const [companyName, setCompanyName] = useState("");
 
   const addSkill = () => {
@@ -53,6 +55,8 @@ export default function CreateJob() {
           salary_max: salaryMax ? parseInt(salaryMax) : null,
           education: education || null,
           additional_criteria: additionalCriteria || null,
+          additional_qualifications: additionalQualifications || null,
+          interview_instructions: interviewInstructions || null,
           company_name: companyName || null,
         })
         .select()
@@ -162,6 +166,18 @@ export default function CreateJob() {
               <div className="space-y-2">
                 <Label htmlFor="criteria">Additional Criteria</Label>
                 <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={2} placeholder="Any other requirements..." />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="qualifications">Additional Qualifications</Label>
+                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={3} placeholder="e.g. Certifications, language requirements, portfolio expectations, must-have qualifications..." />
+                <p className="text-xs text-muted-foreground">These will be considered during candidate evaluation</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instructions">Interview Instructions</Label>
+                <Textarea id="instructions" value={interviewInstructions} onChange={(e) => setInterviewInstructions(e.target.value)} rows={3} placeholder="e.g. Focus on system design, ask scenario-based questions about leadership, avoid coding puzzles, emphasize cultural fit..." />
+                <p className="text-xs text-muted-foreground">Tell the AI how to conduct the interview for this role</p>
               </div>
 
               <Button type="submit" className="w-full" disabled={loading}>

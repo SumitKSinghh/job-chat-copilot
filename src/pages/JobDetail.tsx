@@ -6,13 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Briefcase, ArrowLeft, LogOut, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Briefcase, ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban } from "lucide-react";
+import { toast } from "sonner";
 
 interface Candidate {
   application_id: string;
   candidate_name: string;
   candidate_email: string;
   status: string;
+  rejection_reason: string | null;
   interview_id: string | null;
   interview_status: string | null;
   overall_score: number | null;
@@ -38,6 +42,30 @@ export default function JobDetail() {
   const [loading, setLoading] = useState(true);
   const [expandedCandidate, setExpandedCandidate] = useState<string | null>(null);
   const [qaData, setQaData] = useState<Record<string, QA[]>>({});
+  const [rejectTarget, setRejectTarget] = useState<Candidate | null>(null);
+  const [rejectReason, setRejectReason] = useState("");
+  const [rejecting, setRejecting] = useState(false);
+
+  const handleReject = async () => {
+    if (!rejectTarget || !rejectReason.trim()) {
+      toast.error("Please provide a reason");
+      return;
+    }
+    setRejecting(true);
+    const { error } = await supabase
+      .from("applications")
+      .update({ status: "rejected", rejection_reason: rejectReason.trim() })
+      .eq("id", rejectTarget.application_id);
+    setRejecting(false);
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Application rejected");
+    setRejectTarget(null);
+    setRejectReason("");
+    fetchData();
+  };
 
   useEffect(() => {
     if (jobId) fetchData();
@@ -49,7 +77,7 @@ export default function JobDetail() {
 
     const { data: apps } = await supabase
       .from("applications")
-      .select("id, status, candidate_id")
+      .select("id, status, candidate_id, rejection_reason")
       .eq("job_id", jobId!);
 
     if (apps) {
@@ -77,6 +105,7 @@ export default function JobDetail() {
           candidate_name: profile?.full_name || "Unknown",
           candidate_email: profile?.email || "",
           status: app.status,
+          rejection_reason: app.rejection_reason || null,
           interview_id: interview?.id || null,
           interview_status: interview?.status || null,
           overall_score: evaluation?.overall_score || null,
@@ -196,10 +225,32 @@ export default function JobDetail() {
                           <div className="text-xs text-muted-foreground">Score</div>
                         </div>
                       )}
-                      {getRecBadge(c.recommendation)}
+                      {c.status === "rejected" ? (
+                        <Badge variant="destructive">Rejected</Badge>
+                      ) : (
+                        getRecBadge(c.recommendation)
+                      )}
+                      {c.status !== "rejected" && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setRejectTarget(c);
+                            setRejectReason("");
+                          }}
+                        >
+                          <Ban className="w-3.5 h-3.5 mr-1" /> Reject
+                        </Button>
+                      )}
                       {expandedCandidate === c.application_id ? <ChevronUp className="w-4 h-4 text-muted-foreground" /> : <ChevronDown className="w-4 h-4 text-muted-foreground" />}
                     </div>
                   </div>
+                  {c.status === "rejected" && c.rejection_reason && (
+                    <p className="text-xs text-destructive mt-3 pl-14">
+                      Reason: {c.rejection_reason}
+                    </p>
+                  )}
                 </CardContent>
 
                 {expandedCandidate === c.application_id && (
@@ -269,6 +320,32 @@ export default function JobDetail() {
           </div>
         )}
       </main>
+
+      <Dialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Application</DialogTitle>
+            <DialogDescription>
+              Provide a reason for rejecting {rejectTarget?.candidate_name}. This will be recorded with the application.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="e.g. Did not meet required qualifications, violated interview rules, insufficient experience..."
+            rows={4}
+            maxLength={500}
+          />
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRejectTarget(null)} disabled={rejecting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleReject} disabled={rejecting || !rejectReason.trim()}>
+              {rejecting ? "Rejecting..." : "Confirm Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

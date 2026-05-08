@@ -32,6 +32,10 @@ Required Skills: ${(job.skills || []).join(", ")}
 Experience: ${job.experience || "Not specified"}
 Education: ${job.education || "Not specified"}
 Additional Criteria: ${job.additional_criteria || "None"}
+Additional Qualifications: ${job.additional_qualifications || "None"}
+
+EMPLOYER INTERVIEW INSTRUCTIONS (follow these carefully when crafting questions):
+${job.interview_instructions || "No specific instructions provided. Use a balanced standard interview approach."}
 
 Generate questions in these categories:
 - 2 screening questions (basic fit, motivation)
