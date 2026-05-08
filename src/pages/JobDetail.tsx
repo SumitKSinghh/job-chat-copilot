@@ -81,6 +81,7 @@ export default function JobDetail() {
           candidate_name: profile?.full_name || "Unknown",
           candidate_email: profile?.email || "",
           status: app.status,
+          rejection_reason: app.rejection_reason || null,
           interview_id: interview?.id || null,
           interview_status: interview?.status || null,
           overall_score: evaluation?.overall_score || null,
