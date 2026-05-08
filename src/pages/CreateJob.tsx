@@ -168,6 +168,18 @@ export default function CreateJob() {
                 <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={2} placeholder="Any other requirements..." />
               </div>
 
+              <div className="space-y-2">
+                <Label htmlFor="qualifications">Additional Qualifications</Label>
+                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={3} placeholder="e.g. Certifications, language requirements, portfolio expectations, must-have qualifications..." />
+                <p className="text-xs text-muted-foreground">These will be considered during candidate evaluation</p>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="instructions">Interview Instructions</Label>
+                <Textarea id="instructions" value={interviewInstructions} onChange={(e) => setInterviewInstructions(e.target.value)} rows={3} placeholder="e.g. Focus on system design, ask scenario-based questions about leadership, avoid coding puzzles, emphasize cultural fit..." />
+                <p className="text-xs text-muted-foreground">Tell the AI how to conduct the interview for this role</p>
+              </div>
+
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Creating...</> : "Post Job & Generate Questions"}
               </Button>
