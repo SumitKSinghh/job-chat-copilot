@@ -320,6 +320,32 @@ export default function JobDetail() {
           </div>
         )}
       </main>
+
+      <Dialog open={!!rejectTarget} onOpenChange={(o) => !o && setRejectTarget(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Reject Application</DialogTitle>
+            <DialogDescription>
+              Provide a reason for rejecting {rejectTarget?.candidate_name}. This will be recorded with the application.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            value={rejectReason}
+            onChange={(e) => setRejectReason(e.target.value)}
+            placeholder="e.g. Did not meet required qualifications, violated interview rules, insufficient experience..."
+            rows={4}
+            maxLength={500}
+          />
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setRejectTarget(null)} disabled={rejecting}>
+              Cancel
+            </Button>
+            <Button variant="destructive" onClick={handleReject} disabled={rejecting || !rejectReason.trim()}>
+              {rejecting ? "Rejecting..." : "Confirm Reject"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
