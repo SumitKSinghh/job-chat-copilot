@@ -24,6 +24,8 @@ export default function CreateJob() {
   const [salaryMax, setSalaryMax] = useState("");
   const [education, setEducation] = useState("");
   const [additionalCriteria, setAdditionalCriteria] = useState("");
+  const [additionalQualifications, setAdditionalQualifications] = useState("");
+  const [interviewInstructions, setInterviewInstructions] = useState("");
   const [companyName, setCompanyName] = useState("");
 
   const addSkill = () => {
