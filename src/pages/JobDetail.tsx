@@ -6,13 +6,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { Briefcase, ArrowLeft, LogOut, User, ChevronDown, ChevronUp } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Briefcase, ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban } from "lucide-react";
+import { toast } from "sonner";
 
 interface Candidate {
   application_id: string;
   candidate_name: string;
   candidate_email: string;
   status: string;
+  rejection_reason: string | null;
   interview_id: string | null;
   interview_status: string | null;
   overall_score: number | null;
