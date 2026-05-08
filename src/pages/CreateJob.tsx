@@ -55,6 +55,8 @@ export default function CreateJob() {
           salary_max: salaryMax ? parseInt(salaryMax) : null,
           education: education || null,
           additional_criteria: additionalCriteria || null,
+          additional_qualifications: additionalQualifications || null,
+          interview_instructions: interviewInstructions || null,
           company_name: companyName || null,
         })
         .select()
