@@ -20,6 +20,7 @@ export type Database = {
           created_at: string
           id: string
           job_id: string
+          rejection_reason: string | null
           status: string
           updated_at: string
         }
@@ -28,6 +29,7 @@ export type Database = {
           created_at?: string
           id?: string
           job_id: string
+          rejection_reason?: string | null
           status?: string
           updated_at?: string
         }
@@ -36,6 +38,7 @@ export type Database = {
           created_at?: string
           id?: string
           job_id?: string
+          rejection_reason?: string | null
           status?: string
           updated_at?: string
         }
@@ -172,6 +175,7 @@ export type Database = {
       jobs: {
         Row: {
           additional_criteria: string | null
+          additional_qualifications: string | null
           company_name: string | null
           created_at: string
           created_by: string
@@ -179,6 +183,7 @@ export type Database = {
           education: string | null
           experience: string | null
           id: string
+          interview_instructions: string | null
           salary_max: number | null
           salary_min: number | null
           skills: string[] | null
@@ -188,6 +193,7 @@ export type Database = {
         }
         Insert: {
           additional_criteria?: string | null
+          additional_qualifications?: string | null
           company_name?: string | null
           created_at?: string
           created_by: string
@@ -195,6 +201,7 @@ export type Database = {
           education?: string | null
           experience?: string | null
           id?: string
+          interview_instructions?: string | null
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
@@ -204,6 +211,7 @@ export type Database = {
         }
         Update: {
           additional_criteria?: string | null
+          additional_qualifications?: string | null
           company_name?: string | null
           created_at?: string
           created_by?: string
@@ -211,6 +219,7 @@ export type Database = {
           education?: string | null
           experience?: string | null
           id?: string
+          interview_instructions?: string | null
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
