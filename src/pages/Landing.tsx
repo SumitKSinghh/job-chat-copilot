@@ -130,7 +130,7 @@ export default function Landing() {
               <Sparkles className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-display font-bold tracking-tight">
-              HireAI
+              RecruitIQ
             </span>
           </Link>
           <div className="hidden md:flex items-center gap-8">
@@ -262,7 +262,7 @@ export default function Landing() {
                 </div>
                 <div className="flex-1 flex justify-center">
                   <div className="bg-muted rounded-md px-4 py-1 text-xs text-muted-foreground font-mono">
-                    hireai.app/company/dashboard
+                    recruitiq.app/company/dashboard
                   </div>
                 </div>
               </div>
@@ -567,7 +567,7 @@ export default function Landing() {
             <div className="flex h-7 w-7 items-center justify-center rounded-md gradient-primary">
               <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
             </div>
-            <span className="text-sm font-display font-bold">HireAI</span>
+            <span className="text-sm font-display font-bold">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
@@ -575,7 +575,7 @@ export default function Landing() {
             <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
           </div>
           <p className="text-xs text-muted-foreground">
-            © {new Date().getFullYear()} HireAI. All rights reserved.
+            © {new Date().getFullYear()} RecruitIQ. All rights reserved.
           </p>
         </div>
       </footer>
