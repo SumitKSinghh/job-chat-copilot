@@ -57,6 +57,7 @@ function AppRoutes() {
       <Route path="/" element={<CandidateHome />} />
       <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
       <Route path="/interview/:interviewId" element={<InterviewPage />} />
+      <Route path="/candidate/resume-builder" element={<ResumeBuilder />} />
       <Route path="/auth" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>
