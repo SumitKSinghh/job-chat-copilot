@@ -12,6 +12,7 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import CreateJob from "./pages/CreateJob";
 import JobDetail from "./pages/JobDetail";
 import InterviewPage from "./pages/InterviewPage";
+import ResumeBuilder from "./pages/ResumeBuilder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
