@@ -22,44 +22,116 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [role, setRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchRole = async (userId: string) => {
-    const { data } = await supabase
+  const withTimeout = async <T,>(promise: Promise<T>, ms: number, message: string): Promise<T> => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+    const timeout = new Promise<never>((_, reject) => {
+      timeoutId = setTimeout(() => reject(new Error(message)), ms);
+    });
+    try {
+      return await Promise.race([promise, timeout]);
+    } finally {
+      clearTimeout(timeoutId!);
+    }
+  };
+
+  const clearStoredAuthSession = () => {
+    try {
+      Object.keys(window.localStorage)
+        .filter((key) => key.startsWith("sb-") && key.endsWith("-auth-token"))
+        .forEach((key) => window.localStorage.removeItem(key));
+    } catch (error) {
+      console.warn("Unable to clear stale auth session:", error);
+    }
+  };
+
+  const fetchRole = async (userId: string): Promise<UserRole> => {
+    const { data, error } = await supabase
       .from("user_roles")
       .select("role")
       .eq("user_id", userId)
       .maybeSingle();
-    setRole((data?.role as UserRole) ?? null);
+    if (error) throw error;
+    return (data?.role as UserRole) ?? null;
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          try {
-            await fetchRole(session.user.id);
-          } catch (e) {
-            console.error("Failed to fetch role:", e);
-            setRole(null);
-          }
+    let mounted = true;
+    let subscription: { unsubscribe: () => void } | null = null;
+
+    const loadUserRole = (userId: string) => {
+      setLoading(true);
+      window.setTimeout(() => {
+        withTimeout(fetchRole(userId), 5000, "Role lookup timed out")
+          .then((nextRole) => {
+            if (mounted) setRole(nextRole);
+          })
+          .catch((error) => {
+            console.error("Failed to fetch role:", error);
+            if (mounted) setRole(null);
+          })
+          .finally(() => {
+            if (mounted) setLoading(false);
+          });
+      }, 0);
+    };
+
+    const subscribeToAuthChanges = () => {
+      const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
+        if (!mounted) return;
+
+        setSession(nextSession);
+        setUser(nextSession?.user ?? null);
+
+        if (nextSession?.user) {
+          loadUserRole(nextSession.user.id);
+        } else {
+          setRole(null);
+          setLoading(false);
+        }
+      });
+      subscription = data.subscription;
+    };
+
+    const initializeAuth = async () => {
+      try {
+        const { data: { session: initialSession } } = await withTimeout(
+          supabase.auth.getSession(),
+          5000,
+          "Auth session timed out"
+        );
+
+        if (!mounted) return;
+        setSession(initialSession);
+        setUser(initialSession?.user ?? null);
+
+        if (initialSession?.user) {
+          const nextRole = await withTimeout(fetchRole(initialSession.user.id), 5000, "Role lookup timed out");
+          if (mounted) setRole(nextRole);
         } else {
           setRole(null);
         }
-        setLoading(false);
+      } catch (error) {
+        console.error("Auth initialization failed:", error);
+        clearStoredAuthSession();
+        if (mounted) {
+          setSession(null);
+          setUser(null);
+          setRole(null);
+        }
+      } finally {
+        if (mounted) {
+          setLoading(false);
+          subscribeToAuthChanges();
+        }
       }
-    );
+    };
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchRole(session.user.id).catch(() => setRole(null));
-      }
-      setLoading(false);
-    }).catch(() => setLoading(false));
+    initializeAuth();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription?.unsubscribe();
+    };
   }, []);
 
   const signUp = async (email: string, password: string, fullName: string, role: "company" | "candidate", companyName?: string) => {
