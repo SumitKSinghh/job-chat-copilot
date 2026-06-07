@@ -12,6 +12,7 @@ import CompanyDashboard from "./pages/CompanyDashboard";
 import CreateJob from "./pages/CreateJob";
 import JobDetail from "./pages/JobDetail";
 import InterviewPage from "./pages/InterviewPage";
+import ResumeBuilder from "./pages/ResumeBuilder";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ function AppRoutes() {
       <Route path="/" element={<CandidateHome />} />
       <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
       <Route path="/interview/:interviewId" element={<InterviewPage />} />
+      <Route path="/candidate/resume-builder" element={<ResumeBuilder />} />
       <Route path="/auth" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

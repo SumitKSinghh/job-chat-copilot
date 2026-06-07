@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, MapPin, DollarSign, Clock, Search, LogOut, User } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, Clock, Search, LogOut, User, Sparkles } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 
@@ -97,6 +97,9 @@ export default function CandidateHome() {
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/candidate/resume-builder")}>
+              <Sparkles className="w-4 h-4 mr-1" /> AI Resume
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/candidate/dashboard")}>
               <User className="w-4 h-4 mr-1" /> Dashboard
             </Button>
@@ -199,15 +202,25 @@ export default function CandidateHome() {
                       </span>
                     )}
                   </div>
-                  {appliedJobs.has(job.id) ? (
-                    <Button variant="secondary" className="w-full" disabled>
-                      Already Applied
+                  <div className="flex gap-2">
+                    {appliedJobs.has(job.id) ? (
+                      <Button variant="secondary" className="flex-1" disabled>
+                        Already Applied
+                      </Button>
+                    ) : (
+                      <Button className="flex-1" onClick={() => handleApply(job.id)}>
+                        Apply Now
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      title="Build AI-tailored resume for this job"
+                      onClick={() => navigate(`/candidate/resume-builder?job=${job.id}`)}
+                    >
+                      <Sparkles className="w-4 h-4" />
                     </Button>
-                  ) : (
-                    <Button className="w-full" onClick={() => handleApply(job.id)}>
-                      Apply Now
-                    </Button>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
