@@ -94,7 +94,7 @@ export default function CandidateHome() {
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
               <Briefcase className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg text-foreground">HireAI</span>
+            <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="ghost" size="sm" onClick={() => navigate("/candidate/dashboard")}>

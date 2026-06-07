@@ -90,7 +90,7 @@ export default function CreateJob() {
             <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
               <Briefcase className="w-4 h-4 text-primary-foreground" />
             </div>
-            <span className="font-display font-bold text-lg text-foreground">HireAI</span>
+            <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <Button variant="ghost" size="sm" onClick={signOut}>
             <LogOut className="w-4 h-4 mr-1" /> Logout
