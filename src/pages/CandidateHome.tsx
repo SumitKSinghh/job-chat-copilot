@@ -202,15 +202,25 @@ export default function CandidateHome() {
                       </span>
                     )}
                   </div>
-                  {appliedJobs.has(job.id) ? (
-                    <Button variant="secondary" className="w-full" disabled>
-                      Already Applied
+                  <div className="flex gap-2">
+                    {appliedJobs.has(job.id) ? (
+                      <Button variant="secondary" className="flex-1" disabled>
+                        Already Applied
+                      </Button>
+                    ) : (
+                      <Button className="flex-1" onClick={() => handleApply(job.id)}>
+                        Apply Now
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      title="Build AI-tailored resume for this job"
+                      onClick={() => navigate(`/candidate/resume-builder?job=${job.id}`)}
+                    >
+                      <Sparkles className="w-4 h-4" />
                     </Button>
-                  ) : (
-                    <Button className="w-full" onClick={() => handleApply(job.id)}>
-                      Apply Now
-                    </Button>
-                  )}
+                  </div>
                 </CardContent>
               </Card>
             ))}
