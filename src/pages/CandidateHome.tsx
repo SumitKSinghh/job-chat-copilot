@@ -97,6 +97,9 @@ export default function CandidateHome() {
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
+            <Button variant="ghost" size="sm" onClick={() => navigate("/candidate/resume-builder")}>
+              <Sparkles className="w-4 h-4 mr-1" /> AI Resume
+            </Button>
             <Button variant="ghost" size="sm" onClick={() => navigate("/candidate/dashboard")}>
               <User className="w-4 h-4 mr-1" /> Dashboard
             </Button>
