@@ -43,6 +43,16 @@ export default function AuthPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
       <div className="w-full max-w-md animate-fade-in">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/")}
+          className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to home
+        </Button>
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
             <Logo size={44} />
