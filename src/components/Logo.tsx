@@ -7,15 +7,17 @@ interface LogoProps {
   alt?: string;
 }
 
+/**
+ * RecruitIQ logo. `size` controls the rendered height in px;
+ * width is set automatically to preserve the source aspect ratio.
+ */
 export function Logo({ className, size = 36, alt = "RecruitIQ" }: LogoProps) {
   return (
     <img
       src={logoAsset.url}
       alt={alt}
-      width={size}
-      height={size}
-      className={cn("object-contain", className)}
-      style={{ width: size, height: size }}
+      className={cn("w-auto object-contain", className)}
+      style={{ height: size }}
     />
   );
 }
