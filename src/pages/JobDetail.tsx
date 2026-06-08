@@ -9,6 +9,7 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Briefcase, ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 
 interface Candidate {
@@ -160,9 +161,7 @@ export default function JobDetail() {
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-              <Briefcase className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <Logo size={36} />
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <Button variant="ghost" size="sm" onClick={signOut}>

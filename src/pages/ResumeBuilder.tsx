@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, Upload, Sparkles, Copy, Download, ArrowLeft, FileText, LogOut } from "lucide-react";
+import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
 
@@ -127,9 +128,7 @@ export default function ResumeBuilder() {
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-              <Briefcase className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <Logo size={36} />
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-2">

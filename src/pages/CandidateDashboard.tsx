@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, LogOut, CheckCircle, Clock, XCircle, Sparkles } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 interface Application {
   id: string;
@@ -96,9 +97,7 @@ export default function CandidateDashboard() {
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/")}>
-            <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center">
-              <Briefcase className="w-4 h-4 text-primary-foreground" />
-            </div>
+            <Logo size={36} />
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
