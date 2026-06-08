@@ -126,9 +126,7 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg gradient-primary">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
-            </div>
+            <Logo size={40} />
             <span className="text-lg font-display font-bold tracking-tight">
               RecruitIQ
             </span>
@@ -564,9 +562,7 @@ export default function Landing() {
       <footer className="border-t border-border/60 py-10">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md gradient-primary">
-              <Sparkles className="h-3.5 w-3.5 text-primary-foreground" />
-            </div>
+            <Logo size={28} />
             <span className="text-sm font-display font-bold">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">

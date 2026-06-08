@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { Building2, User, Briefcase, ArrowRight } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
@@ -43,9 +44,7 @@ export default function AuthPage() {
       <div className="w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 mb-4">
-            <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center">
-              <Briefcase className="w-5 h-5 text-primary-foreground" />
-            </div>
+            <Logo size={44} />
             <h1 className="text-2xl font-display font-bold text-foreground">RecruitIQ</h1>
           </div>
           <p className="text-muted-foreground">AI-powered hiring platform</p>
