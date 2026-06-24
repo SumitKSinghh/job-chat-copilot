@@ -340,6 +340,7 @@ export type Database = {
         Row: {
           candidate_id: string
           created_at: string
+          extracted_skills: string[] | null
           generated_markdown: string
           id: string
           job_id: string | null
@@ -349,6 +350,7 @@ export type Database = {
         Insert: {
           candidate_id: string
           created_at?: string
+          extracted_skills?: string[] | null
           generated_markdown: string
           id?: string
           job_id?: string | null
@@ -358,6 +360,7 @@ export type Database = {
         Update: {
           candidate_id?: string
           created_at?: string
+          extracted_skills?: string[] | null
           generated_markdown?: string
           id?: string
           job_id?: string | null

@@ -23,6 +23,8 @@ export default function CompanyDashboard() {
   const [jobs, setJobs] = useState<JobWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalApplicants, setTotalApplicants] = useState(0);
+  const [avgScore, setAvgScore] = useState<number | null>(null);
+  const [recBreakdown, setRecBreakdown] = useState({ hire: 0, consider: 0, reject: 0 });
 
   useEffect(() => {
     if (!user) return;
@@ -37,23 +39,46 @@ export default function CompanyDashboard() {
       .order("created_at", { ascending: false });
 
     if (jobsData) {
+      const jobIds = jobsData.map((j) => j.id);
       const jobsWithStats: JobWithStats[] = [];
       let total = 0;
+
+      // Per-job applicant counts
       for (const job of jobsData) {
         const { count } = await supabase
           .from("applications")
           .select("*", { count: "exact", head: true })
           .eq("job_id", job.id);
-
         const appCount = count || 0;
         total += appCount;
-
-        jobsWithStats.push({
-          ...job,
-          applicant_count: appCount,
-          avg_score: null,
-        });
+        jobsWithStats.push({ ...job, applicant_count: appCount, avg_score: null });
       }
+
+      // Aggregate evaluations across all this employer's jobs
+      if (jobIds.length) {
+        const { data: apps } = await supabase
+          .from("applications")
+          .select("id")
+          .in("job_id", jobIds);
+        const appIds = (apps || []).map((a) => a.id);
+        if (appIds.length) {
+          const { data: interviews } = await supabase
+            .from("interviews").select("id").in("application_id", appIds);
+          const intIds = (interviews || []).map((i) => i.id);
+          if (intIds.length) {
+            const { data: evals } = await supabase
+              .from("evaluations").select("overall_score, recommendation").in("interview_id", intIds);
+            if (evals?.length) {
+              const scored = evals.filter((e) => e.overall_score != null);
+              if (scored.length) setAvgScore(Math.round(scored.reduce((s, e) => s + (e.overall_score || 0), 0) / scored.length));
+              const rb = { hire: 0, consider: 0, reject: 0 };
+              evals.forEach((e) => { if (e.recommendation && e.recommendation in rb) (rb as any)[e.recommendation]++; });
+              setRecBreakdown(rb);
+            }
+          }
+        }
+      }
+
       setJobs(jobsWithStats);
       setTotalApplicants(total);
     }
@@ -81,7 +106,7 @@ export default function CompanyDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-6 flex items-center gap-4">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -110,8 +135,18 @@ export default function CompanyDashboard() {
                 <TrendingUp className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-foreground">—</div>
-                <div className="text-sm text-muted-foreground">Avg. Score</div>
+                <div className="text-2xl font-bold text-foreground">{avgScore ?? "—"}</div>
+                <div className="text-sm text-muted-foreground">Avg. Match Score</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-muted-foreground mb-2">AI Recommendations</div>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-2 py-1 rounded bg-success/10 text-success font-medium">Hire {recBreakdown.hire}</span>
+                <span className="px-2 py-1 rounded bg-warning/10 text-warning font-medium">Consider {recBreakdown.consider}</span>
+                <span className="px-2 py-1 rounded bg-destructive/10 text-destructive font-medium">Reject {recBreakdown.reject}</span>
               </div>
             </CardContent>
           </Card>
