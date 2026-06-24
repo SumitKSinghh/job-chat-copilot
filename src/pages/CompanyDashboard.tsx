@@ -23,6 +23,8 @@ export default function CompanyDashboard() {
   const [jobs, setJobs] = useState<JobWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [totalApplicants, setTotalApplicants] = useState(0);
+  const [avgScore, setAvgScore] = useState<number | null>(null);
+  const [recBreakdown, setRecBreakdown] = useState({ hire: 0, consider: 0, reject: 0 });
 
   useEffect(() => {
     if (!user) return;
@@ -37,23 +39,46 @@ export default function CompanyDashboard() {
       .order("created_at", { ascending: false });
 
     if (jobsData) {
+      const jobIds = jobsData.map((j) => j.id);
       const jobsWithStats: JobWithStats[] = [];
       let total = 0;
+
+      // Per-job applicant counts
       for (const job of jobsData) {
         const { count } = await supabase
           .from("applications")
           .select("*", { count: "exact", head: true })
           .eq("job_id", job.id);
-
         const appCount = count || 0;
         total += appCount;
-
-        jobsWithStats.push({
-          ...job,
-          applicant_count: appCount,
-          avg_score: null,
-        });
+        jobsWithStats.push({ ...job, applicant_count: appCount, avg_score: null });
       }
+
+      // Aggregate evaluations across all this employer's jobs
+      if (jobIds.length) {
+        const { data: apps } = await supabase
+          .from("applications")
+          .select("id")
+          .in("job_id", jobIds);
+        const appIds = (apps || []).map((a) => a.id);
+        if (appIds.length) {
+          const { data: interviews } = await supabase
+            .from("interviews").select("id").in("application_id", appIds);
+          const intIds = (interviews || []).map((i) => i.id);
+          if (intIds.length) {
+            const { data: evals } = await supabase
+              .from("evaluations").select("overall_score, recommendation").in("interview_id", intIds);
+            if (evals?.length) {
+              const scored = evals.filter((e) => e.overall_score != null);
+              if (scored.length) setAvgScore(Math.round(scored.reduce((s, e) => s + (e.overall_score || 0), 0) / scored.length));
+              const rb = { hire: 0, consider: 0, reject: 0 };
+              evals.forEach((e) => { if (e.recommendation && e.recommendation in rb) (rb as any)[e.recommendation]++; });
+              setRecBreakdown(rb);
+            }
+          }
+        }
+      }
+
       setJobs(jobsWithStats);
       setTotalApplicants(total);
     }
