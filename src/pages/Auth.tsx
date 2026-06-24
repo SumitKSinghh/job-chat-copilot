@@ -98,7 +98,7 @@ export default function AuthPage() {
                         }`}
                       >
                         <Building2 className="w-5 h-5 mb-2 text-secondary" />
-                        <div className="font-medium text-sm text-foreground">Company</div>
+                        <div className="font-medium text-sm text-foreground">Employer</div>
                         <div className="text-xs text-muted-foreground">Post jobs & hire</div>
                       </button>
                     </div>
