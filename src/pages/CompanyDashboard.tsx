@@ -106,7 +106,7 @@ export default function CompanyDashboard() {
 
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-6 flex items-center gap-4">
               <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
@@ -135,8 +135,18 @@ export default function CompanyDashboard() {
                 <TrendingUp className="w-6 h-6 text-accent" />
               </div>
               <div>
-                <div className="text-2xl font-bold text-foreground">—</div>
-                <div className="text-sm text-muted-foreground">Avg. Score</div>
+                <div className="text-2xl font-bold text-foreground">{avgScore ?? "—"}</div>
+                <div className="text-sm text-muted-foreground">Avg. Match Score</div>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="p-6">
+              <div className="text-sm text-muted-foreground mb-2">AI Recommendations</div>
+              <div className="flex flex-wrap gap-2 text-xs">
+                <span className="px-2 py-1 rounded bg-success/10 text-success font-medium">Hire {recBreakdown.hire}</span>
+                <span className="px-2 py-1 rounded bg-warning/10 text-warning font-medium">Consider {recBreakdown.consider}</span>
+                <span className="px-2 py-1 rounded bg-destructive/10 text-destructive font-medium">Reject {recBreakdown.reject}</span>
               </div>
             </CardContent>
           </Card>
