@@ -85,7 +85,7 @@ export default function AuthPage() {
                         }`}
                       >
                         <User className="w-5 h-5 mb-2 text-primary" />
-                        <div className="font-medium text-sm text-foreground">Candidate</div>
+                        <div className="font-medium text-sm text-foreground">Job Seeker</div>
                         <div className="text-xs text-muted-foreground">Find & apply for jobs</div>
                       </button>
                       <button
