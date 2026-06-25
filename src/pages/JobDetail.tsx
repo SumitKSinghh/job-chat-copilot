@@ -336,6 +336,23 @@ export default function JobDetail() {
             </div>
           )}
 
+          {c.resume && (
+            <div className="mb-4">
+              <ResumeIntelligencePanel
+                experience={c.resume.parsed_experience}
+                education={c.resume.parsed_education}
+                certifications={c.resume.parsed_certifications}
+                totalYears={c.resume.total_experience_years}
+                gaps={c.resume.gaps}
+                risks={c.resume.hiring_risks}
+                matchBreakdown={c.resume.match_breakdown}
+                status={c.resume.analysis_status}
+              />
+            </div>
+          )}
+
+
+
           {(c.strengths?.length || c.weaknesses?.length || c.detailed_feedback) && (
             <div className="mb-4 p-4 rounded-lg border border-border bg-card">
               <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
