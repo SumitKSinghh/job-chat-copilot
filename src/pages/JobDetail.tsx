@@ -248,7 +248,14 @@ export default function JobDetail() {
         onClick={() => toggleCandidate(c.application_id, c.interview_id)}
       >
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                checked={selectedIds.has(c.application_id)}
+                onCheckedChange={() => toggleSelect(c.application_id)}
+                aria-label="Select for comparison"
+              />
+            </div>
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="w-5 h-5 text-primary" />
             </div>
