@@ -10,6 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, LogOut, X, Plus, ArrowLeft, Loader2 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { RankingWeightsEditor, type Weights, type CustomCriterion } from "@/components/RankingWeightsEditor";
 import { toast } from "sonner";
 
 export default function CreateJob() {
@@ -28,6 +29,8 @@ export default function CreateJob() {
   const [additionalQualifications, setAdditionalQualifications] = useState("");
   const [interviewInstructions, setInterviewInstructions] = useState("");
   const [companyName, setCompanyName] = useState("");
+  const [weights, setWeights] = useState<Weights>({ resume: 40, interview: 40, experience: 10, skills: 10 });
+  const [customCriteria, setCustomCriteria] = useState<CustomCriterion[]>([]);
 
   const addSkill = () => {
     if (skillInput.trim() && !skills.includes(skillInput.trim())) {
@@ -59,7 +62,9 @@ export default function CreateJob() {
           additional_qualifications: additionalQualifications || null,
           interview_instructions: interviewInstructions || null,
           company_name: companyName || null,
-        })
+          ranking_weights: weights as any,
+          custom_criteria: customCriteria as any,
+        } as any)
         .select()
         .single();
 
@@ -178,6 +183,13 @@ export default function CreateJob() {
                 <Textarea id="instructions" value={interviewInstructions} onChange={(e) => setInterviewInstructions(e.target.value)} rows={3} placeholder="e.g. Focus on system design, ask scenario-based questions about leadership, avoid coding puzzles, emphasize cultural fit..." />
                 <p className="text-xs text-muted-foreground">Tell the AI how to conduct the interview for this role</p>
               </div>
+
+              <RankingWeightsEditor
+                weights={weights}
+                customCriteria={customCriteria}
+                onChange={(w, c) => { setWeights(w); setCustomCriteria(c); }}
+              />
+
 
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Creating...</> : "Post Job & Generate Questions"}

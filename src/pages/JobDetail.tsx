@@ -9,8 +9,11 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban, Star, FileText, Users, CheckCircle2, TrendingUp } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban, Star, FileText, Users, CheckCircle2, TrendingUp, Sparkles, GitCompare } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ResumeIntelligencePanel } from "@/components/ResumeIntelligencePanel";
+import { RecruitIQChat } from "@/components/RecruitIQChat";
 import { toast } from "sonner";
 
 interface ResumeInfo {
@@ -18,6 +21,14 @@ interface ResumeInfo {
   original_text: string;
   generated_markdown: string;
   extracted_skills: string[] | null;
+  parsed_experience?: any[] | null;
+  parsed_education?: any[] | null;
+  parsed_certifications?: string[] | null;
+  total_experience_years?: number | null;
+  gaps?: any[] | null;
+  hiring_risks?: string[] | null;
+  match_breakdown?: any | null;
+  analysis_status?: string | null;
 }
 
 interface Candidate {
@@ -37,6 +48,7 @@ interface Candidate {
   weaknesses: string[] | null;
   detailed_feedback: string | null;
   resume: ResumeInfo | null;
+  weighted_score: number | null;
 }
 
 interface QA { question: string; answer: string; }
@@ -68,6 +80,23 @@ export default function JobDetail() {
   const [rejectReason, setRejectReason] = useState("");
   const [rejecting, setRejecting] = useState(false);
   const [resumePreview, setResumePreview] = useState<ResumeInfo | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showChat, setShowChat] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((p) => {
+      const n = new Set(p);
+      if (n.has(id)) n.delete(id);
+      else if (n.size < 4) n.add(id);
+      else toast.error("Compare up to 4 candidates at a time");
+      return n;
+    });
+  };
+
+  const goCompare = () => {
+    if (selectedIds.size < 2) return toast.error("Select at least 2 candidates");
+    navigate(`/company/job/${jobId}/compare?ids=${Array.from(selectedIds).join(",")}`);
+  };
 
   useEffect(() => { if (jobId) fetchData(); }, [jobId]);
 
@@ -95,7 +124,7 @@ export default function JobDetail() {
 
         const { data: resume } = await supabase
           .from("resumes")
-          .select("id, original_text, generated_markdown, extracted_skills")
+          .select("*")
           .eq("candidate_id", app.candidate_id)
           .eq("job_id", jobId!)
           .order("created_at", { ascending: false })
@@ -104,11 +133,25 @@ export default function JobDetail() {
 
         let resumeInfo: ResumeInfo | null = null;
         if (resume) {
-          const skills = resume.extracted_skills?.length
-            ? resume.extracted_skills
-            : extractSkills(resume.original_text || "", jobData?.skills || []);
-          resumeInfo = { ...resume, extracted_skills: skills };
+          const r: any = resume;
+          const skills = r.extracted_skills?.length
+            ? r.extracted_skills
+            : extractSkills(r.original_text || "", jobData?.skills || []);
+          resumeInfo = { ...r, extracted_skills: skills };
         }
+
+        const w = (jobData as any)?.ranking_weights || { resume: 40, interview: 40, experience: 10, skills: 10 };
+        const wTotal = (w.resume || 0) + (w.interview || 0) + (w.experience || 0) + (w.skills || 0) || 100;
+        const resumeScore = (resumeInfo as any)?.match_breakdown?.overall ?? 0;
+        const interviewScore = evaluation?.overall_score ?? 0;
+        const expScore = Math.min(100, ((resumeInfo as any)?.total_experience_years || 0) * 10);
+        const skillsScore = (resumeInfo as any)?.match_breakdown?.skills_match
+          ?? (resumeInfo?.extracted_skills?.length && jobData?.skills?.length
+              ? Math.round((resumeInfo.extracted_skills.length / jobData.skills.length) * 100)
+              : 0);
+        const weighted = Math.round(
+          (resumeScore * w.resume + interviewScore * w.interview + expScore * w.experience + skillsScore * w.skills) / wTotal,
+        );
 
         candidateList.push({
           application_id: app.id,
@@ -127,9 +170,10 @@ export default function JobDetail() {
           weaknesses: evaluation?.weaknesses ?? null,
           detailed_feedback: evaluation?.detailed_feedback ?? null,
           resume: resumeInfo,
+          weighted_score: weighted || null,
         });
       }
-      candidateList.sort((a, b) => (b.overall_score || 0) - (a.overall_score || 0));
+      candidateList.sort((a, b) => (b.weighted_score || b.overall_score || 0) - (a.weighted_score || a.overall_score || 0));
       setCandidates(candidateList);
     }
     setLoading(false);
@@ -204,7 +248,14 @@ export default function JobDetail() {
         onClick={() => toggleCandidate(c.application_id, c.interview_id)}
       >
         <div className="flex items-center justify-between flex-wrap gap-3">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3">
+            <div onClick={(e) => e.stopPropagation()}>
+              <Checkbox
+                checked={selectedIds.has(c.application_id)}
+                onCheckedChange={() => toggleSelect(c.application_id)}
+                aria-label="Select for comparison"
+              />
+            </div>
             <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
               <User className="w-5 h-5 text-primary" />
             </div>
@@ -214,10 +265,16 @@ export default function JobDetail() {
             </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            {c.overall_score !== null && (
+            {c.weighted_score !== null && (
               <div className="text-right">
-                <div className="text-2xl font-bold text-primary">{c.overall_score}</div>
-                <div className="text-xs text-muted-foreground">Match score</div>
+                <div className="text-2xl font-bold text-primary">{c.weighted_score}</div>
+                <div className="text-xs text-muted-foreground">Weighted score</div>
+              </div>
+            )}
+            {c.overall_score !== null && c.weighted_score !== c.overall_score && (
+              <div className="text-right">
+                <div className="text-sm font-semibold text-foreground">{c.overall_score}</div>
+                <div className="text-xs text-muted-foreground">Interview</div>
               </div>
             )}
             {c.status === "rejected" ? <Badge variant="destructive">Rejected</Badge>
@@ -278,6 +335,23 @@ export default function JobDetail() {
               </div>
             </div>
           )}
+
+          {c.resume && (
+            <div className="mb-4">
+              <ResumeIntelligencePanel
+                experience={c.resume.parsed_experience}
+                education={c.resume.parsed_education}
+                certifications={c.resume.parsed_certifications}
+                totalYears={c.resume.total_experience_years}
+                gaps={c.resume.gaps}
+                risks={c.resume.hiring_risks}
+                matchBreakdown={c.resume.match_breakdown}
+                status={c.resume.analysis_status}
+              />
+            </div>
+          )}
+
+
 
           {(c.strengths?.length || c.weaknesses?.length || c.detailed_feedback) && (
             <div className="mb-4 p-4 rounded-lg border border-border bg-card">
@@ -354,11 +428,45 @@ export default function JobDetail() {
         </Button>
 
         {job && (
-          <div className="mb-8">
-            <h1 className="text-2xl font-display font-bold text-foreground">{job.title}</h1>
-            <p className="text-muted-foreground mt-1">{job.company_name}</p>
+          <div className="mb-8 flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h1 className="text-2xl font-display font-bold text-foreground">{job.title}</h1>
+              <p className="text-muted-foreground mt-1">{job.company_name}</p>
+            </div>
+            <Button variant="outline" onClick={() => setShowChat((v) => !v)}>
+              <Sparkles className="w-4 h-4 mr-1" /> {showChat ? "Hide" : "Ask"} RecruitIQ
+            </Button>
           </div>
         )}
+
+        {showChat && jobId && (
+          <div className="mb-6">
+            <RecruitIQChat
+              jobId={jobId}
+              scopeLabel={`Candidates for ${job?.title || "this job"}`}
+              quickPrompts={[
+                "Who are the top 3 candidates and why?",
+                "Which candidates have all required skills?",
+                "Any candidates I should reject quickly?",
+              ]}
+            />
+          </div>
+        )}
+
+        {selectedIds.size > 0 && (
+          <div className="mb-4 flex items-center justify-between p-3 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="text-sm text-foreground">
+              <span className="font-semibold">{selectedIds.size}</span> selected for comparison
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>Clear</Button>
+              <Button size="sm" onClick={goCompare} disabled={selectedIds.size < 2}>
+                <GitCompare className="w-3.5 h-3.5 mr-1" /> Compare ({selectedIds.size})
+              </Button>
+            </div>
+          </div>
+        )}
+
 
         {/* Analytics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">

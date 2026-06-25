@@ -46,12 +46,18 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
 
+    const customCriteria: any[] = (job as any).custom_criteria || [];
+    const criteriaBlock = customCriteria.length
+      ? `\nCUSTOM HIRING CRITERIA (score 0-100 each):\n${customCriteria.map((c: any) => `- ${c.label}${c.description ? `: ${c.description}` : ""}`).join("\n")}`
+      : "";
+
     const prompt = `Evaluate this candidate's interview for the position of "${job.title}".
 
 Job Requirements:
 - Skills: ${(job.skills || []).join(", ")}
 - Experience: ${job.experience || "Not specified"}
 - Description: ${job.description}
+${criteriaBlock}
 
 Interview Transcript:
 ${transcript}
@@ -63,7 +69,8 @@ Evaluate the candidate on:
 4. Key strengths (list 3-5)
 5. Areas for improvement (list 2-4)
 6. Recommendation: hire, consider, or reject
-7. Detailed feedback paragraph`;
+7. Detailed feedback paragraph
+${customCriteria.length ? "8. A score (0-100) for each custom criterion listed above" : ""}`;
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -92,6 +99,18 @@ Evaluate the candidate on:
                 weaknesses: { type: "array", items: { type: "string" } },
                 recommendation: { type: "string", enum: ["hire", "consider", "reject"] },
                 detailed_feedback: { type: "string" },
+                custom_criteria_scores: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      label: { type: "string" },
+                      score: { type: "number", minimum: 0, maximum: 100 },
+                      reasoning: { type: "string" },
+                    },
+                    required: ["label", "score"],
+                  },
+                },
               },
               required: ["overall_score", "communication_score", "skill_score", "strengths", "weaknesses", "recommendation", "detailed_feedback"],
             },
@@ -129,7 +148,8 @@ Evaluate the candidate on:
       weaknesses: evaluation.weaknesses,
       recommendation: evaluation.recommendation,
       detailed_feedback: evaluation.detailed_feedback,
-    });
+      custom_criteria_scores: evaluation.custom_criteria_scores || [],
+    } as any);
     if (evalErr) throw evalErr;
 
     // Update interview status

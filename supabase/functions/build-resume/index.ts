@@ -109,6 +109,22 @@ Requirements:
       .single();
     if (insErr) throw insErr;
 
+    // Kick off deep resume analysis in background (don't block)
+    if (jobId) {
+      try {
+        fetch(`${supabaseUrl}/functions/v1/analyze-resume`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ resumeId: saved.id }),
+        }).catch((e) => console.error("analyze-resume trigger failed", e));
+      } catch (e) {
+        console.error("analyze-resume trigger error", e);
+      }
+    }
+
     return new Response(JSON.stringify({ resume: saved }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
