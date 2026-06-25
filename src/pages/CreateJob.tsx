@@ -184,6 +184,13 @@ export default function CreateJob() {
                 <p className="text-xs text-muted-foreground">Tell the AI how to conduct the interview for this role</p>
               </div>
 
+              <RankingWeightsEditor
+                weights={weights}
+                customCriteria={customCriteria}
+                onChange={(w, c) => { setWeights(w); setCustomCriteria(c); }}
+              />
+
+
               <Button type="submit" className="w-full" disabled={loading}>
                 {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Creating...</> : "Post Job & Generate Questions"}
               </Button>

@@ -5,7 +5,7 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Plus, Users, TrendingUp, LogOut, Eye } from "lucide-react";
+import { Briefcase, Plus, Users, TrendingUp, LogOut, Eye, Sparkles } from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 interface JobWithStats {
@@ -94,6 +94,9 @@ export default function CompanyDashboard() {
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={() => navigate("/company/assistant")}>
+              <Sparkles className="w-4 h-4 mr-1" /> AI Assistant
+            </Button>
             <Button onClick={() => navigate("/company/create-job")}>
               <Plus className="w-4 h-4 mr-1" /> Post Job
             </Button>
