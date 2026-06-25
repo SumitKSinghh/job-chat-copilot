@@ -9,8 +9,11 @@ import { Progress } from "@/components/ui/progress";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban, Star, FileText, Users, CheckCircle2, TrendingUp } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban, Star, FileText, Users, CheckCircle2, TrendingUp, Sparkles, GitCompare } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { ResumeIntelligencePanel } from "@/components/ResumeIntelligencePanel";
+import { RecruitIQChat } from "@/components/RecruitIQChat";
 import { toast } from "sonner";
 
 interface ResumeInfo {
@@ -18,6 +21,14 @@ interface ResumeInfo {
   original_text: string;
   generated_markdown: string;
   extracted_skills: string[] | null;
+  parsed_experience?: any[] | null;
+  parsed_education?: any[] | null;
+  parsed_certifications?: string[] | null;
+  total_experience_years?: number | null;
+  gaps?: any[] | null;
+  hiring_risks?: string[] | null;
+  match_breakdown?: any | null;
+  analysis_status?: string | null;
 }
 
 interface Candidate {
@@ -37,6 +48,7 @@ interface Candidate {
   weaknesses: string[] | null;
   detailed_feedback: string | null;
   resume: ResumeInfo | null;
+  weighted_score: number | null;
 }
 
 interface QA { question: string; answer: string; }
