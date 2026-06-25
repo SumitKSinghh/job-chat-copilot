@@ -107,7 +107,7 @@ export default function JobDetail() {
 
         const { data: resume } = await supabase
           .from("resumes")
-          .select("id, original_text, generated_markdown, extracted_skills")
+          .select("*")
           .eq("candidate_id", app.candidate_id)
           .eq("job_id", jobId!)
           .order("created_at", { ascending: false })
@@ -116,11 +116,25 @@ export default function JobDetail() {
 
         let resumeInfo: ResumeInfo | null = null;
         if (resume) {
-          const skills = resume.extracted_skills?.length
-            ? resume.extracted_skills
-            : extractSkills(resume.original_text || "", jobData?.skills || []);
-          resumeInfo = { ...resume, extracted_skills: skills };
+          const r: any = resume;
+          const skills = r.extracted_skills?.length
+            ? r.extracted_skills
+            : extractSkills(r.original_text || "", jobData?.skills || []);
+          resumeInfo = { ...r, extracted_skills: skills };
         }
+
+        const w = (jobData as any)?.ranking_weights || { resume: 40, interview: 40, experience: 10, skills: 10 };
+        const wTotal = (w.resume || 0) + (w.interview || 0) + (w.experience || 0) + (w.skills || 0) || 100;
+        const resumeScore = (resumeInfo as any)?.match_breakdown?.overall ?? 0;
+        const interviewScore = evaluation?.overall_score ?? 0;
+        const expScore = Math.min(100, ((resumeInfo as any)?.total_experience_years || 0) * 10);
+        const skillsScore = (resumeInfo as any)?.match_breakdown?.skills_match
+          ?? (resumeInfo?.extracted_skills?.length && jobData?.skills?.length
+              ? Math.round((resumeInfo.extracted_skills.length / jobData.skills.length) * 100)
+              : 0);
+        const weighted = Math.round(
+          (resumeScore * w.resume + interviewScore * w.interview + expScore * w.experience + skillsScore * w.skills) / wTotal,
+        );
 
         candidateList.push({
           application_id: app.id,
@@ -139,9 +153,10 @@ export default function JobDetail() {
           weaknesses: evaluation?.weaknesses ?? null,
           detailed_feedback: evaluation?.detailed_feedback ?? null,
           resume: resumeInfo,
+          weighted_score: weighted || null,
         });
       }
-      candidateList.sort((a, b) => (b.overall_score || 0) - (a.overall_score || 0));
+      candidateList.sort((a, b) => (b.weighted_score || b.overall_score || 0) - (a.weighted_score || a.overall_score || 0));
       setCandidates(candidateList);
     }
     setLoading(false);
