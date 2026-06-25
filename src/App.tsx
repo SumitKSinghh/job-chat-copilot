@@ -13,6 +13,8 @@ import CreateJob from "./pages/CreateJob";
 import JobDetail from "./pages/JobDetail";
 import InterviewPage from "./pages/InterviewPage";
 import ResumeBuilder from "./pages/ResumeBuilder";
+import CandidateCompare from "./pages/CandidateCompare";
+import RecruitIQAssistant from "./pages/RecruitIQAssistant";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -45,6 +47,8 @@ function AppRoutes() {
         <Route path="/company/dashboard" element={<CompanyDashboard />} />
         <Route path="/company/create-job" element={<CreateJob />} />
         <Route path="/company/job/:jobId" element={<JobDetail />} />
+        <Route path="/company/job/:jobId/compare" element={<CandidateCompare />} />
+        <Route path="/company/assistant" element={<RecruitIQAssistant />} />
         <Route path="/auth" element={<Navigate to="/company/dashboard" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
