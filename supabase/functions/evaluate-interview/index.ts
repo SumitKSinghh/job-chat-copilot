@@ -148,7 +148,8 @@ ${customCriteria.length ? "8. A score (0-100) for each custom criterion listed a
       weaknesses: evaluation.weaknesses,
       recommendation: evaluation.recommendation,
       detailed_feedback: evaluation.detailed_feedback,
-    });
+      custom_criteria_scores: evaluation.custom_criteria_scores || [],
+    } as any);
     if (evalErr) throw evalErr;
 
     // Update interview status
