@@ -56,6 +56,7 @@ export type Database = {
         Row: {
           communication_score: number | null
           created_at: string
+          custom_criteria_scores: Json | null
           detailed_feedback: string | null
           id: string
           interview_id: string
@@ -68,6 +69,7 @@ export type Database = {
         Insert: {
           communication_score?: number | null
           created_at?: string
+          custom_criteria_scores?: Json | null
           detailed_feedback?: string | null
           id?: string
           interview_id: string
@@ -80,6 +82,7 @@ export type Database = {
         Update: {
           communication_score?: number | null
           created_at?: string
+          custom_criteria_scores?: Json | null
           detailed_feedback?: string | null
           id?: string
           interview_id?: string
@@ -179,11 +182,13 @@ export type Database = {
           company_name: string | null
           created_at: string
           created_by: string
+          custom_criteria: Json | null
           description: string
           education: string | null
           experience: string | null
           id: string
           interview_instructions: string | null
+          ranking_weights: Json | null
           salary_max: number | null
           salary_min: number | null
           skills: string[] | null
@@ -197,11 +202,13 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           created_by: string
+          custom_criteria?: Json | null
           description: string
           education?: string | null
           experience?: string | null
           id?: string
           interview_instructions?: string | null
+          ranking_weights?: Json | null
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
@@ -215,11 +222,13 @@ export type Database = {
           company_name?: string | null
           created_at?: string
           created_by?: string
+          custom_criteria?: Json | null
           description?: string
           education?: string | null
           experience?: string | null
           id?: string
           interview_instructions?: string | null
+          ranking_weights?: Json | null
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
@@ -338,33 +347,57 @@ export type Database = {
       }
       resumes: {
         Row: {
+          analysis_status: string | null
           candidate_id: string
           created_at: string
           extracted_skills: string[] | null
+          gaps: Json | null
           generated_markdown: string
+          hiring_risks: string[] | null
           id: string
           job_id: string | null
+          match_breakdown: Json | null
           original_text: string
+          parsed_certifications: string[] | null
+          parsed_education: Json | null
+          parsed_experience: Json | null
+          total_experience_years: number | null
           updated_at: string
         }
         Insert: {
+          analysis_status?: string | null
           candidate_id: string
           created_at?: string
           extracted_skills?: string[] | null
+          gaps?: Json | null
           generated_markdown: string
+          hiring_risks?: string[] | null
           id?: string
           job_id?: string | null
+          match_breakdown?: Json | null
           original_text: string
+          parsed_certifications?: string[] | null
+          parsed_education?: Json | null
+          parsed_experience?: Json | null
+          total_experience_years?: number | null
           updated_at?: string
         }
         Update: {
+          analysis_status?: string | null
           candidate_id?: string
           created_at?: string
           extracted_skills?: string[] | null
+          gaps?: Json | null
           generated_markdown?: string
+          hiring_risks?: string[] | null
           id?: string
           job_id?: string | null
+          match_breakdown?: Json | null
           original_text?: string
+          parsed_certifications?: string[] | null
+          parsed_education?: Json | null
+          parsed_experience?: Json | null
+          total_experience_years?: number | null
           updated_at?: string
         }
         Relationships: []
