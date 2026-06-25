@@ -265,10 +265,16 @@ export default function JobDetail() {
             </div>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            {c.overall_score !== null && (
+            {c.weighted_score !== null && (
               <div className="text-right">
-                <div className="text-2xl font-bold text-primary">{c.overall_score}</div>
-                <div className="text-xs text-muted-foreground">Match score</div>
+                <div className="text-2xl font-bold text-primary">{c.weighted_score}</div>
+                <div className="text-xs text-muted-foreground">Weighted score</div>
+              </div>
+            )}
+            {c.overall_score !== null && c.weighted_score !== c.overall_score && (
+              <div className="text-right">
+                <div className="text-sm font-semibold text-foreground">{c.overall_score}</div>
+                <div className="text-xs text-muted-foreground">Interview</div>
               </div>
             )}
             {c.status === "rejected" ? <Badge variant="destructive">Rejected</Badge>
