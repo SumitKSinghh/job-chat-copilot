@@ -80,6 +80,23 @@ export default function JobDetail() {
   const [rejectReason, setRejectReason] = useState("");
   const [rejecting, setRejecting] = useState(false);
   const [resumePreview, setResumePreview] = useState<ResumeInfo | null>(null);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [showChat, setShowChat] = useState(false);
+
+  const toggleSelect = (id: string) => {
+    setSelectedIds((p) => {
+      const n = new Set(p);
+      if (n.has(id)) n.delete(id);
+      else if (n.size < 4) n.add(id);
+      else toast.error("Compare up to 4 candidates at a time");
+      return n;
+    });
+  };
+
+  const goCompare = () => {
+    if (selectedIds.size < 2) return toast.error("Select at least 2 candidates");
+    navigate(`/company/job/${jobId}/compare?ids=${Array.from(selectedIds).join(",")}`);
+  };
 
   useEffect(() => { if (jobId) fetchData(); }, [jobId]);
 
