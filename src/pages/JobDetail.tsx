@@ -428,11 +428,45 @@ export default function JobDetail() {
         </Button>
 
         {job && (
-          <div className="mb-8">
-            <h1 className="text-2xl font-display font-bold text-foreground">{job.title}</h1>
-            <p className="text-muted-foreground mt-1">{job.company_name}</p>
+          <div className="mb-8 flex items-start justify-between gap-3 flex-wrap">
+            <div>
+              <h1 className="text-2xl font-display font-bold text-foreground">{job.title}</h1>
+              <p className="text-muted-foreground mt-1">{job.company_name}</p>
+            </div>
+            <Button variant="outline" onClick={() => setShowChat((v) => !v)}>
+              <Sparkles className="w-4 h-4 mr-1" /> {showChat ? "Hide" : "Ask"} RecruitIQ
+            </Button>
           </div>
         )}
+
+        {showChat && jobId && (
+          <div className="mb-6">
+            <RecruitIQChat
+              jobId={jobId}
+              scopeLabel={`Candidates for ${job?.title || "this job"}`}
+              quickPrompts={[
+                "Who are the top 3 candidates and why?",
+                "Which candidates have all required skills?",
+                "Any candidates I should reject quickly?",
+              ]}
+            />
+          </div>
+        )}
+
+        {selectedIds.size > 0 && (
+          <div className="mb-4 flex items-center justify-between p-3 rounded-lg border border-primary/30 bg-primary/5">
+            <div className="text-sm text-foreground">
+              <span className="font-semibold">{selectedIds.size}</span> selected for comparison
+            </div>
+            <div className="flex gap-2">
+              <Button size="sm" variant="ghost" onClick={() => setSelectedIds(new Set())}>Clear</Button>
+              <Button size="sm" onClick={goCompare} disabled={selectedIds.size < 2}>
+                <GitCompare className="w-3.5 h-3.5 mr-1" /> Compare ({selectedIds.size})
+              </Button>
+            </div>
+          </div>
+        )}
+
 
         {/* Analytics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
