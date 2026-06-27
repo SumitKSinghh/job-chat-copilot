@@ -138,7 +138,7 @@ export default function CompanyDashboard() {
     if (job.salary_max) return `Up to $${(job.salary_max / 1000).toFixed(0)}k`;
     return null;
   };
-  };
+
 
   return (
     <div className="min-h-screen bg-background">
