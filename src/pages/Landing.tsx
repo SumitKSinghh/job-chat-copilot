@@ -549,7 +549,8 @@ export default function Landing() {
                 the best talent faster and fairer.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/auth">
+                <Link to="/auth?role=company">
+
                   <Button
                     size="lg"
                     className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90 h-12 px-8 text-base shadow-lg"
