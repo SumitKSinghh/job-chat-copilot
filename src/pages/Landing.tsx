@@ -226,13 +226,18 @@ export default function Landing() {
               variants={fadeUp}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Link to="/auth">
+              <Link to="/auth?role=company">
                 <Button
                   size="lg"
                   className="gradient-primary border-0 text-primary-foreground h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all"
                 >
-                  Start Hiring for Free
+                  I'm Hiring — Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/auth?role=candidate">
+                <Button variant="outline" size="lg" className="h-12 px-8 text-base">
+                  I'm Looking for a Job
                 </Button>
               </Link>
               <a href="#how-it-works">
