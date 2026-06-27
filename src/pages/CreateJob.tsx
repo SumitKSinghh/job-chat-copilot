@@ -31,15 +31,46 @@ export default function CreateJob() {
   const [companyName, setCompanyName] = useState("");
   const [weights, setWeights] = useState<Weights>({ resume: 40, interview: 40, experience: 10, skills: 10 });
   const [customCriteria, setCustomCriteria] = useState<CustomCriterion[]>([]);
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
 
-  const addSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()]);
-      setSkillInput("");
+  const addSkill = (raw?: string) => {
+    const value = (raw ?? skillInput).trim();
+    if (value && !skills.includes(value)) {
+      setSkills([...skills, value]);
+      if (!raw) setSkillInput("");
     }
+    setSuggestedSkills((prev) => prev.filter((s) => s !== value));
   };
 
   const removeSkill = (s: string) => setSkills(skills.filter((sk) => sk !== s));
+
+  const suggestSkills = async () => {
+    if (!title.trim() && !description.trim()) {
+      toast.error("Add a job title or description first");
+      return;
+    }
+    setSuggesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-skills", {
+        body: { title, description, experience, education },
+      });
+      if (error) throw error;
+      const incoming: string[] = (data?.skills || []).filter(
+        (s: string) => s && !skills.map((x) => x.toLowerCase()).includes(s.toLowerCase()),
+      );
+      if (!incoming.length) {
+        toast.info("No new skills found — try adding more detail to the description");
+      } else {
+        setSuggestedSkills(incoming);
+        toast.success(`Suggested ${incoming.length} skills`);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Could not generate skills");
+    } finally {
+      setSuggesting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
