@@ -210,17 +210,31 @@ export default function CompanyDashboard() {
         </div>
 
         {/* Jobs List */}
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-display font-semibold text-foreground">Your Job Postings</h2>
-          <Button variant="outline" onClick={() => navigate("/company/create-job")}>
-            <Plus className="w-4 h-4 mr-1" /> New Job
-          </Button>
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 mb-4">
+          <div>
+            <h2 className="text-xl font-display font-semibold text-foreground">Your Job Postings</h2>
+            <p className="text-sm text-muted-foreground">Manage roles, review candidates, and track hiring progress.</p>
+          </div>
+          <div className="flex items-center gap-2 w-full md:w-auto">
+            <div className="relative flex-1 md:w-72">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+              <Input
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search jobs, skills..."
+                className="pl-9 h-9"
+              />
+            </div>
+            <Button variant="outline" onClick={() => navigate("/company/create-job")} className="h-9">
+              <Plus className="w-4 h-4 mr-1" /> New
+            </Button>
+          </div>
         </div>
 
         {loading ? (
-          <div className="space-y-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {[1, 2].map(i => (
-              <Card key={i} className="animate-pulse"><CardContent className="p-6"><div className="h-16 bg-muted rounded" /></CardContent></Card>
+              <Card key={i} className="animate-pulse"><CardContent className="p-6"><div className="h-32 bg-muted rounded" /></CardContent></Card>
             ))}
           </div>
         ) : jobs.length === 0 ? (
@@ -232,32 +246,130 @@ export default function CompanyDashboard() {
               <Button onClick={() => navigate("/company/create-job")}>Post Your First Job</Button>
             </CardContent>
           </Card>
+        ) : filteredJobs.length === 0 ? (
+          <Card className="text-center py-12">
+            <CardContent>
+              <Search className="w-10 h-10 mx-auto text-muted-foreground mb-3" />
+              <h3 className="font-medium text-foreground mb-1">No jobs match "{search}"</h3>
+              <p className="text-sm text-muted-foreground">Try a different search term.</p>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="space-y-4">
-            {jobs.map(job => (
-              <Card key={job.id} className="hover:shadow-card-hover transition-shadow cursor-pointer" onClick={() => navigate(`/company/job/${job.id}`)}>
-                <CardContent className="p-6 flex items-center justify-between">
-                  <div>
-                    <h3 className="font-display font-semibold text-foreground">{job.title}</h3>
-                    <p className="text-sm text-muted-foreground">
-                      Posted {new Date(job.created_at).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="text-right">
-                      <div className="text-lg font-semibold text-foreground">{job.applicant_count}</div>
-                      <div className="text-xs text-muted-foreground">Applicants</div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            {filteredJobs.map(job => {
+              const salary = fmtSalary(job);
+              const visibleSkills = (job.skills || []).slice(0, 6);
+              const moreSkills = (job.skills || []).length - visibleSkills.length;
+              return (
+                <Card
+                  key={job.id}
+                  className="group hover:shadow-card-hover hover:border-primary/30 transition-all cursor-pointer flex flex-col"
+                  onClick={() => navigate(`/company/job/${job.id}`)}
+                >
+                  <CardContent className="p-6 flex flex-col gap-4 flex-1">
+                    {/* Header */}
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                          <Badge
+                            variant={job.status === "active" ? "default" : "secondary"}
+                            className="capitalize"
+                          >
+                            {job.status === "active" && <CheckCircle2 className="w-3 h-3 mr-1" />}
+                            {job.status}
+                          </Badge>
+                          <span className="text-xs text-muted-foreground inline-flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {new Date(job.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <h3 className="font-display font-semibold text-lg text-foreground truncate group-hover:text-primary transition-colors">
+                          {job.title}
+                        </h3>
+                        {job.company_name && (
+                          <p className="text-sm text-muted-foreground truncate">{job.company_name}</p>
+                        )}
+                      </div>
+                      <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
                     </div>
-                    <Badge variant={job.status === "active" ? "default" : "secondary"}>
-                      {job.status}
-                    </Badge>
-                    <Button variant="ghost" size="icon">
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+
+                    {/* Meta */}
+                    <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs text-muted-foreground">
+                      {salary && (
+                        <span className="inline-flex items-center gap-1">
+                          <DollarSign className="w-3.5 h-3.5" /> {salary}
+                        </span>
+                      )}
+                      {job.experience && (
+                        <span className="inline-flex items-center gap-1">
+                          <Briefcase className="w-3.5 h-3.5" /> {job.experience}
+                        </span>
+                      )}
+                      {job.education && (
+                        <span className="inline-flex items-center gap-1">
+                          <GraduationCap className="w-3.5 h-3.5" /> {job.education}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Description */}
+                    {job.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-2">{job.description}</p>
+                    )}
+
+                    {/* Skills */}
+                    {visibleSkills.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5">
+                        {visibleSkills.map((s) => (
+                          <Badge key={s} variant="outline" className="text-[11px] font-normal">{s}</Badge>
+                        ))}
+                        {moreSkills > 0 && (
+                          <Badge variant="outline" className="text-[11px] font-normal text-muted-foreground">+{moreSkills} more</Badge>
+                        )}
+                      </div>
+                    )}
+
+                    {/* Stats footer */}
+                    <div className="mt-auto pt-3 border-t border-border grid grid-cols-3 gap-2 text-center">
+                      <div>
+                        <div className="text-base font-semibold text-foreground inline-flex items-center gap-1 justify-center">
+                          <Users className="w-3.5 h-3.5 text-muted-foreground" />
+                          {job.applicant_count}
+                        </div>
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Applicants</div>
+                      </div>
+                      <div>
+                        <div className="text-base font-semibold text-foreground">{job.interviewed_count}</div>
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Interviewed</div>
+                      </div>
+                      <div>
+                        <div className="text-base font-semibold text-foreground">{job.avg_score ?? "—"}</div>
+                        <div className="text-[10px] uppercase tracking-wide text-muted-foreground">Avg Score</div>
+                      </div>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={(e) => { e.stopPropagation(); navigate(`/company/job/${job.id}`); }}
+                      >
+                        <Eye className="w-3.5 h-3.5 mr-1" /> View candidates
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => { e.stopPropagation(); navigate(`/company/job/${job.id}?tab=insights`); }}
+                      >
+                        <TrendingUp className="w-3.5 h-3.5 mr-1" /> Insights
+                      </Button>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         )}
       </main>
