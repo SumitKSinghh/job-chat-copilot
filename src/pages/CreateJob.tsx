@@ -162,10 +162,23 @@ export default function CreateJob() {
               </div>
 
               <div className="space-y-2">
-                <Label>Required Skills</Label>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <Label>Required Skills</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={suggestSkills}
+                    disabled={suggesting}
+                    className="h-8 gap-1.5"
+                  >
+                    {suggesting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    {suggesting ? "Thinking..." : "Suggest with AI"}
+                  </Button>
+                </div>
                 <div className="flex gap-2">
                   <Input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} placeholder="Add a skill" onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())} />
-                  <Button type="button" variant="outline" onClick={addSkill}><Plus className="w-4 h-4" /></Button>
+                  <Button type="button" variant="outline" onClick={() => addSkill()}><Plus className="w-4 h-4" /></Button>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {skills.map(s => (
@@ -174,6 +187,38 @@ export default function CreateJob() {
                     </Badge>
                   ))}
                 </div>
+                {suggestedSkills.length > 0 && (
+                  <div className="mt-3 rounded-lg border border-dashed border-primary/40 bg-primary/5 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-primary" />
+                        AI-suggested skills — click to add
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          suggestedSkills.forEach((s) => addSkill(s));
+                          setSuggestedSkills([]);
+                        }}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Add all
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedSkills.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => addSkill(s)}
+                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-background border border-primary/30 hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          <Plus className="w-3 h-3" /> {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
