@@ -92,7 +92,7 @@ export default function CandidateHome() {
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Logo size={36} />
+            <Logo className="h-9 md:h-11" />
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">

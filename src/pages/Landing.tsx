@@ -127,7 +127,7 @@ export default function Landing() {
       <nav className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-background/80 backdrop-blur-xl">
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <Link to="/" className="flex items-center gap-2.5">
-            <Logo size={40} />
+            <Logo className="h-10 md:h-12" />
             <span className="text-lg font-display font-bold tracking-tight">
               RecruitIQ
             </span>
@@ -144,7 +144,7 @@ export default function Landing() {
             </a>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth">
+            <Link to="/auth?mode=login">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 Sign In
               </Button>
@@ -226,13 +226,18 @@ export default function Landing() {
               variants={fadeUp}
               className="flex flex-col sm:flex-row items-center justify-center gap-4"
             >
-              <Link to="/auth">
+              <Link to="/auth?role=company">
                 <Button
                   size="lg"
                   className="gradient-primary border-0 text-primary-foreground h-12 px-8 text-base shadow-lg hover:shadow-xl transition-all"
                 >
-                  Start Hiring for Free
+                  I'm Hiring — Get Started
                   <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </Link>
+              <Link to="/auth?role=candidate">
+                <Button variant="outline" size="lg" className="h-12 px-8 text-base">
+                  I'm Looking for a Job
                 </Button>
               </Link>
               <a href="#how-it-works">
@@ -544,7 +549,8 @@ export default function Landing() {
                 the best talent faster and fairer.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <Link to="/auth">
+                <Link to="/auth?role=company">
+
                   <Button
                     size="lg"
                     className="bg-primary-foreground text-foreground hover:bg-primary-foreground/90 h-12 px-8 text-base shadow-lg"
@@ -563,7 +569,7 @@ export default function Landing() {
       <footer className="border-t border-border/60 py-10">
         <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2.5">
-            <Logo size={28} />
+            <Logo className="h-8 md:h-10" />
             <span className="text-sm font-display font-bold">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-6 text-sm text-muted-foreground">

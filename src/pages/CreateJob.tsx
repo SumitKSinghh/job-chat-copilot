@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, LogOut, X, Plus, ArrowLeft, Loader2 } from "lucide-react";
+import { Briefcase, LogOut, X, Plus, ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { RankingWeightsEditor, type Weights, type CustomCriterion } from "@/components/RankingWeightsEditor";
 import { toast } from "sonner";
@@ -31,15 +31,46 @@ export default function CreateJob() {
   const [companyName, setCompanyName] = useState("");
   const [weights, setWeights] = useState<Weights>({ resume: 40, interview: 40, experience: 10, skills: 10 });
   const [customCriteria, setCustomCriteria] = useState<CustomCriterion[]>([]);
+  const [suggesting, setSuggesting] = useState(false);
+  const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
 
-  const addSkill = () => {
-    if (skillInput.trim() && !skills.includes(skillInput.trim())) {
-      setSkills([...skills, skillInput.trim()]);
-      setSkillInput("");
+  const addSkill = (raw?: string) => {
+    const value = (raw ?? skillInput).trim();
+    if (value && !skills.includes(value)) {
+      setSkills([...skills, value]);
+      if (!raw) setSkillInput("");
     }
+    setSuggestedSkills((prev) => prev.filter((s) => s !== value));
   };
 
   const removeSkill = (s: string) => setSkills(skills.filter((sk) => sk !== s));
+
+  const suggestSkills = async () => {
+    if (!title.trim() && !description.trim()) {
+      toast.error("Add a job title or description first");
+      return;
+    }
+    setSuggesting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-skills", {
+        body: { title, description, experience, education },
+      });
+      if (error) throw error;
+      const incoming: string[] = (data?.skills || []).filter(
+        (s: string) => s && !skills.map((x) => x.toLowerCase()).includes(s.toLowerCase()),
+      );
+      if (!incoming.length) {
+        toast.info("No new skills found — try adding more detail to the description");
+      } else {
+        setSuggestedSkills(incoming);
+        toast.success(`Suggested ${incoming.length} skills`);
+      }
+    } catch (err: any) {
+      toast.error(err.message || "Could not generate skills");
+    } finally {
+      setSuggesting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -93,7 +124,7 @@ export default function CreateJob() {
       <header className="border-b border-border bg-card sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Logo size={36} />
+            <Logo className="h-9 md:h-11" />
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <Button variant="ghost" size="sm" onClick={signOut}>
@@ -131,10 +162,23 @@ export default function CreateJob() {
               </div>
 
               <div className="space-y-2">
-                <Label>Required Skills</Label>
+                <div className="flex items-center justify-between flex-wrap gap-2">
+                  <Label>Required Skills</Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={suggestSkills}
+                    disabled={suggesting}
+                    className="h-8 gap-1.5"
+                  >
+                    {suggesting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                    {suggesting ? "Thinking..." : "Suggest with AI"}
+                  </Button>
+                </div>
                 <div className="flex gap-2">
                   <Input value={skillInput} onChange={(e) => setSkillInput(e.target.value)} placeholder="Add a skill" onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addSkill())} />
-                  <Button type="button" variant="outline" onClick={addSkill}><Plus className="w-4 h-4" /></Button>
+                  <Button type="button" variant="outline" onClick={() => addSkill()}><Plus className="w-4 h-4" /></Button>
                 </div>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {skills.map(s => (
@@ -143,6 +187,38 @@ export default function CreateJob() {
                     </Badge>
                   ))}
                 </div>
+                {suggestedSkills.length > 0 && (
+                  <div className="mt-3 rounded-lg border border-dashed border-primary/40 bg-primary/5 p-3">
+                    <div className="flex items-center justify-between mb-2">
+                      <div className="text-xs font-medium text-foreground flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-primary" />
+                        AI-suggested skills — click to add
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          suggestedSkills.forEach((s) => addSkill(s));
+                          setSuggestedSkills([]);
+                        }}
+                        className="text-xs text-primary hover:underline"
+                      >
+                        Add all
+                      </button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {suggestedSkills.map((s) => (
+                        <button
+                          key={s}
+                          type="button"
+                          onClick={() => addSkill(s)}
+                          className="inline-flex items-center gap-1 text-xs px-2.5 py-1 rounded-full bg-background border border-primary/30 hover:bg-primary hover:text-primary-foreground transition-colors"
+                        >
+                          <Plus className="w-3 h-3" /> {s}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-4">
