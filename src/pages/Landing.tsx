@@ -144,7 +144,7 @@ export default function Landing() {
             </a>
           </div>
           <div className="flex items-center gap-3">
-            <Link to="/auth">
+            <Link to="/auth?mode=login">
               <Button variant="ghost" size="sm" className="hidden sm:inline-flex">
                 Sign In
               </Button>
