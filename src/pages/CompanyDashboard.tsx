@@ -39,6 +39,8 @@ export default function CompanyDashboard() {
   const [avgScore, setAvgScore] = useState<number | null>(null);
   const [recBreakdown, setRecBreakdown] = useState({ hire: 0, consider: 0, reject: 0 });
 
+  const [search, setSearch] = useState("");
+
   useEffect(() => {
     if (!user) return;
     fetchJobs();
