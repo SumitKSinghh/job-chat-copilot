@@ -21,7 +21,6 @@ interface JobWithStats {
   skills: string[] | null;
   experience: string | null;
   education: string | null;
-  location: string | null;
   salary_min: number | null;
   salary_max: number | null;
   company_name: string | null;
