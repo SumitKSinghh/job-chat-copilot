@@ -125,7 +125,7 @@ export default function CompanyDashboard() {
     const q = search.trim().toLowerCase();
     if (!q) return jobs;
     return jobs.filter((j) =>
-      [j.title, j.description, j.location, j.company_name, ...(j.skills || [])]
+      [j.title, j.description, j.company_name, ...(j.skills || [])]
         .filter(Boolean)
         .some((v) => String(v).toLowerCase().includes(q)),
     );
