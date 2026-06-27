@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Plus, Users, TrendingUp, LogOut, Eye, Sparkles } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  Briefcase, Plus, Users, TrendingUp, LogOut, Eye, Sparkles,
+  MapPin, DollarSign, GraduationCap, Clock, Search, ArrowUpRight, CheckCircle2,
+} from "lucide-react";
 import { Logo } from "@/components/Logo";
 
 interface JobWithStats {
@@ -13,7 +17,16 @@ interface JobWithStats {
   title: string;
   status: string;
   created_at: string;
+  description: string | null;
+  skills: string[] | null;
+  experience: string | null;
+  education: string | null;
+  location: string | null;
+  salary_min: number | null;
+  salary_max: number | null;
+  company_name: string | null;
   applicant_count: number;
+  interviewed_count: number;
   avg_score: number | null;
 }
 
