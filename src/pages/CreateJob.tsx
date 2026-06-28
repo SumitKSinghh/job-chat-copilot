@@ -114,6 +114,8 @@ export default function CreateJob() {
           experience: experience || null,
           salary_min: salaryMin ? parseInt(salaryMin) : null,
           salary_max: salaryMax ? parseInt(salaryMax) : null,
+          salary_currency: salaryCurrency,
+          hide_salary: hideSalary,
           education: education || null,
           additional_criteria: additionalCriteria || null,
           additional_qualifications: additionalQualifications || null,
