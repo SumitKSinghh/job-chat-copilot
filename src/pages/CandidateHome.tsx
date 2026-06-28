@@ -18,6 +18,8 @@ interface Job {
   experience: string | null;
   salary_min: number | null;
   salary_max: number | null;
+  salary_currency: string | null;
+  hide_salary: boolean | null;
   company_name: string | null;
   created_at: string;
 }
