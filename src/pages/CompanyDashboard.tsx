@@ -50,7 +50,7 @@ export default function CompanyDashboard() {
   const fetchJobs = async () => {
     const { data: jobsData } = await supabase
       .from("jobs")
-      .select("id, title, status, created_at, description, skills, experience, education, salary_min, salary_max, company_name")
+      .select("id, title, status, created_at, description, skills, experience, education, salary_min, salary_max, salary_currency, hide_salary, company_name")
       .eq("created_by", user!.id)
       .order("created_at", { ascending: false });
 
