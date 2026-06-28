@@ -18,6 +18,8 @@ interface Job {
   experience: string | null;
   salary_min: number | null;
   salary_max: number | null;
+  salary_currency: string | null;
+  hide_salary: boolean | null;
   company_name: string | null;
   created_at: string;
 }
@@ -190,16 +192,20 @@ export default function CandidateHome() {
                         <Clock className="w-3 h-3" /> {job.experience}
                       </span>
                     )}
-                    {(job.salary_min || job.salary_max) && (
-                      <span className="flex items-center gap-1">
-                        <DollarSign className="w-3 h-3" />
-                        {job.salary_min && job.salary_max
-                          ? `$${(job.salary_min / 1000).toFixed(0)}k - $${(job.salary_max / 1000).toFixed(0)}k`
-                          : job.salary_min
-                          ? `From $${(job.salary_min / 1000).toFixed(0)}k`
-                          : `Up to $${((job.salary_max || 0) / 1000).toFixed(0)}k`}
-                      </span>
-                    )}
+                    {!job.hide_salary && (job.salary_min || job.salary_max) && (() => {
+                      const sym = job.salary_currency === "INR" ? "₹" : "$";
+                      const fmt = (n: number) => `${sym}${(n / 1000).toFixed(0)}k`;
+                      return (
+                        <span className="flex items-center gap-1">
+                          <DollarSign className="w-3 h-3" />
+                          {job.salary_min && job.salary_max
+                            ? `${fmt(job.salary_min)} - ${fmt(job.salary_max)}`
+                            : job.salary_min
+                            ? `From ${fmt(job.salary_min)}`
+                            : `Up to ${fmt(job.salary_max || 0)}`}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <div className="flex gap-2">
                     {appliedJobs.has(job.id) ? (

@@ -8,6 +8,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Briefcase, LogOut, X, Plus, ArrowLeft, Loader2, Sparkles } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { RankingWeightsEditor, type Weights, type CustomCriterion } from "@/components/RankingWeightsEditor";
@@ -24,6 +26,8 @@ export default function CreateJob() {
   const [experience, setExperience] = useState("");
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
+  const [salaryCurrency, setSalaryCurrency] = useState<"USD" | "INR">("USD");
+  const [hideSalary, setHideSalary] = useState(false);
   const [education, setEducation] = useState("");
   const [additionalCriteria, setAdditionalCriteria] = useState("");
   const [additionalQualifications, setAdditionalQualifications] = useState("");
@@ -33,6 +37,7 @@ export default function CreateJob() {
   const [customCriteria, setCustomCriteria] = useState<CustomCriterion[]>([]);
   const [suggesting, setSuggesting] = useState(false);
   const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
+  const [suggestingCriteria, setSuggestingCriteria] = useState(false);
 
   const addSkill = (raw?: string) => {
     const value = (raw ?? skillInput).trim();
@@ -72,6 +77,27 @@ export default function CreateJob() {
     }
   };
 
+  const suggestCriteria = async () => {
+    if (!description.trim()) {
+      toast.error("Add a job description first");
+      return;
+    }
+    setSuggestingCriteria(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-criteria", {
+        body: { title, description, experience, education, skills },
+      });
+      if (error) throw error;
+      if (data?.additional_criteria) setAdditionalCriteria(data.additional_criteria);
+      if (data?.additional_qualifications) setAdditionalQualifications(data.additional_qualifications);
+      toast.success("AI recommendations added");
+    } catch (err: any) {
+      toast.error(err.message || "Could not generate recommendations");
+    } finally {
+      setSuggestingCriteria(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
@@ -88,6 +114,8 @@ export default function CreateJob() {
           experience: experience || null,
           salary_min: salaryMin ? parseInt(salaryMin) : null,
           salary_max: salaryMax ? parseInt(salaryMax) : null,
+          salary_currency: salaryCurrency,
+          hide_salary: hideSalary,
           education: education || null,
           additional_criteria: additionalCriteria || null,
           additional_qualifications: additionalQualifications || null,
@@ -232,25 +260,61 @@ export default function CreateJob() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="salaryMin">Salary Min ($)</Label>
-                  <Input id="salaryMin" type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} placeholder="e.g. 80000" />
+              <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <Label className="text-sm font-semibold">Salary</Label>
+                  <div className="w-32">
+                    <Select value={salaryCurrency} onValueChange={(v) => setSalaryCurrency(v as "USD" | "INR")}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="INR">INR (₹)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="salaryMax">Salary Max ($)</Label>
-                  <Input id="salaryMax" type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} placeholder="e.g. 120000" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMin">Min ({salaryCurrency === "INR" ? "₹" : "$"})</Label>
+                    <Input id="salaryMin" type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} placeholder={salaryCurrency === "INR" ? "e.g. 800000" : "e.g. 80000"} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMax">Max ({salaryCurrency === "INR" ? "₹" : "$"})</Label>
+                    <Input id="salaryMax" type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} placeholder={salaryCurrency === "INR" ? "e.g. 1500000" : "e.g. 120000"} />
+                  </div>
                 </div>
+                <div className="flex items-center justify-between pt-1">
+                  <div>
+                    <Label htmlFor="hideSalary" className="text-sm">Hide salary from candidates</Label>
+                    <p className="text-xs text-muted-foreground">Candidates won't see this range on the listing</p>
+                  </div>
+                  <Switch id="hideSalary" checked={hideSalary} onCheckedChange={setHideSalary} />
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <Label className="text-sm font-semibold">AI recommendations</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={suggestCriteria}
+                  disabled={suggestingCriteria}
+                  className="h-8 gap-1.5"
+                >
+                  {suggestingCriteria ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  {suggestingCriteria ? "Thinking..." : "Suggest criteria & qualifications"}
+                </Button>
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="criteria">Additional Criteria</Label>
-                <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={2} placeholder="Any other requirements..." />
+                <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={4} placeholder="Any other requirements... (or use AI Suggest above)" />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="qualifications">Additional Qualifications</Label>
-                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={3} placeholder="e.g. Certifications, language requirements, portfolio expectations, must-have qualifications..." />
+                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={4} placeholder="e.g. Certifications, language requirements, portfolio expectations... (or use AI Suggest above)" />
                 <p className="text-xs text-muted-foreground">These will be considered during candidate evaluation</p>
               </div>
 

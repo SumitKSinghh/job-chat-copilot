@@ -23,6 +23,8 @@ interface JobWithStats {
   education: string | null;
   salary_min: number | null;
   salary_max: number | null;
+  salary_currency: string | null;
+  hide_salary: boolean | null;
   company_name: string | null;
   applicant_count: number;
   interviewed_count: number;
@@ -48,7 +50,7 @@ export default function CompanyDashboard() {
   const fetchJobs = async () => {
     const { data: jobsData } = await supabase
       .from("jobs")
-      .select("id, title, status, created_at, description, skills, experience, education, salary_min, salary_max, company_name")
+      .select("id, title, status, created_at, description, skills, experience, education, salary_min, salary_max, salary_currency, hide_salary, company_name")
       .eq("created_by", user!.id)
       .order("created_at", { ascending: false });
 
@@ -132,9 +134,11 @@ export default function CompanyDashboard() {
   }, [jobs, search]);
 
   const fmtSalary = (job: JobWithStats) => {
-    if (job.salary_min && job.salary_max) return `$${(job.salary_min / 1000).toFixed(0)}k–$${(job.salary_max / 1000).toFixed(0)}k`;
-    if (job.salary_min) return `From $${(job.salary_min / 1000).toFixed(0)}k`;
-    if (job.salary_max) return `Up to $${(job.salary_max / 1000).toFixed(0)}k`;
+    const sym = job.salary_currency === "INR" ? "₹" : "$";
+    const suffix = job.hide_salary ? " (hidden)" : "";
+    if (job.salary_min && job.salary_max) return `${sym}${(job.salary_min / 1000).toFixed(0)}k–${sym}${(job.salary_max / 1000).toFixed(0)}k${suffix}`;
+    if (job.salary_min) return `From ${sym}${(job.salary_min / 1000).toFixed(0)}k${suffix}`;
+    if (job.salary_max) return `Up to ${sym}${(job.salary_max / 1000).toFixed(0)}k${suffix}`;
     return null;
   };
 
