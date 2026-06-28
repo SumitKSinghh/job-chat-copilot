@@ -292,14 +292,29 @@ export default function CreateJob() {
                 </div>
               </div>
 
+              <div className="flex items-center justify-between flex-wrap gap-2">
+                <Label className="text-sm font-semibold">AI recommendations</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="sm"
+                  onClick={suggestCriteria}
+                  disabled={suggestingCriteria}
+                  className="h-8 gap-1.5"
+                >
+                  {suggestingCriteria ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+                  {suggestingCriteria ? "Thinking..." : "Suggest criteria & qualifications"}
+                </Button>
+              </div>
+
               <div className="space-y-2">
                 <Label htmlFor="criteria">Additional Criteria</Label>
-                <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={2} placeholder="Any other requirements..." />
+                <Textarea id="criteria" value={additionalCriteria} onChange={(e) => setAdditionalCriteria(e.target.value)} rows={4} placeholder="Any other requirements... (or use AI Suggest above)" />
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="qualifications">Additional Qualifications</Label>
-                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={3} placeholder="e.g. Certifications, language requirements, portfolio expectations, must-have qualifications..." />
+                <Textarea id="qualifications" value={additionalQualifications} onChange={(e) => setAdditionalQualifications(e.target.value)} rows={4} placeholder="e.g. Certifications, language requirements, portfolio expectations... (or use AI Suggest above)" />
                 <p className="text-xs text-muted-foreground">These will be considered during candidate evaluation</p>
               </div>
 
