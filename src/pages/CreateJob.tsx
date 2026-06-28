@@ -77,6 +77,27 @@ export default function CreateJob() {
     }
   };
 
+  const suggestCriteria = async () => {
+    if (!description.trim()) {
+      toast.error("Add a job description first");
+      return;
+    }
+    setSuggestingCriteria(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("suggest-criteria", {
+        body: { title, description, experience, education, skills },
+      });
+      if (error) throw error;
+      if (data?.additional_criteria) setAdditionalCriteria(data.additional_criteria);
+      if (data?.additional_qualifications) setAdditionalQualifications(data.additional_qualifications);
+      toast.success("AI recommendations added");
+    } catch (err: any) {
+      toast.error(err.message || "Could not generate recommendations");
+    } finally {
+      setSuggestingCriteria(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
