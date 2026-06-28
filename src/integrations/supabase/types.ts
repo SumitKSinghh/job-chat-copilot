@@ -186,9 +186,11 @@ export type Database = {
           description: string
           education: string | null
           experience: string | null
+          hide_salary: boolean
           id: string
           interview_instructions: string | null
           ranking_weights: Json | null
+          salary_currency: string
           salary_max: number | null
           salary_min: number | null
           skills: string[] | null
@@ -206,9 +208,11 @@ export type Database = {
           description: string
           education?: string | null
           experience?: string | null
+          hide_salary?: boolean
           id?: string
           interview_instructions?: string | null
           ranking_weights?: Json | null
+          salary_currency?: string
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
@@ -226,9 +230,11 @@ export type Database = {
           description?: string
           education?: string | null
           experience?: string | null
+          hide_salary?: boolean
           id?: string
           interview_instructions?: string | null
           ranking_weights?: Json | null
+          salary_currency?: string
           salary_max?: number | null
           salary_min?: number | null
           skills?: string[] | null
