@@ -134,9 +134,11 @@ export default function CompanyDashboard() {
   }, [jobs, search]);
 
   const fmtSalary = (job: JobWithStats) => {
-    if (job.salary_min && job.salary_max) return `$${(job.salary_min / 1000).toFixed(0)}k–$${(job.salary_max / 1000).toFixed(0)}k`;
-    if (job.salary_min) return `From $${(job.salary_min / 1000).toFixed(0)}k`;
-    if (job.salary_max) return `Up to $${(job.salary_max / 1000).toFixed(0)}k`;
+    const sym = job.salary_currency === "INR" ? "₹" : "$";
+    const suffix = job.hide_salary ? " (hidden)" : "";
+    if (job.salary_min && job.salary_max) return `${sym}${(job.salary_min / 1000).toFixed(0)}k–${sym}${(job.salary_max / 1000).toFixed(0)}k${suffix}`;
+    if (job.salary_min) return `From ${sym}${(job.salary_min / 1000).toFixed(0)}k${suffix}`;
+    if (job.salary_max) return `Up to ${sym}${(job.salary_max / 1000).toFixed(0)}k${suffix}`;
     return null;
   };
 
