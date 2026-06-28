@@ -58,8 +58,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let mounted = true;
     let subscription: { unsubscribe: () => void } | null = null;
 
-    const loadUserRole = (userId: string) => {
-      setLoading(true);
+    let currentUserId: string | null = null;
+
+    const loadUserRole = (userId: string, showLoading = false) => {
+      if (showLoading) setLoading(true);
       window.setTimeout(() => {
         withTimeout(fetchRole(userId), 5000, "Role lookup timed out")
           .then((nextRole) => {
@@ -70,7 +72,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             if (mounted) setRole(null);
           })
           .finally(() => {
-            if (mounted) setLoading(false);
+            if (mounted && showLoading) setLoading(false);
           });
       }, 0);
     };
@@ -79,14 +81,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const { data } = supabase.auth.onAuthStateChange((_event, nextSession) => {
         if (!mounted) return;
 
+        const nextUserId = nextSession?.user?.id ?? null;
         setSession(nextSession);
         setUser(nextSession?.user ?? null);
 
-        if (nextSession?.user) {
-          loadUserRole(nextSession.user.id);
-        } else {
+        // Only reload role when the user actually changes. Ignore TOKEN_REFRESHED
+        // and tab-focus events that fire with the same user — otherwise the app
+        // re-renders into a loading spinner and resets form state.
+        if (nextUserId && nextUserId !== currentUserId) {
+          currentUserId = nextUserId;
+          loadUserRole(nextUserId, false);
+        } else if (!nextUserId && currentUserId) {
+          currentUserId = null;
           setRole(null);
-          setLoading(false);
         }
       });
       subscription = data.subscription;
