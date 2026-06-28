@@ -260,14 +260,35 @@ export default function CreateJob() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="salaryMin">Salary Min ($)</Label>
-                  <Input id="salaryMin" type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} placeholder="e.g. 80000" />
+              <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/20">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <Label className="text-sm font-semibold">Salary</Label>
+                  <div className="w-32">
+                    <Select value={salaryCurrency} onValueChange={(v) => setSalaryCurrency(v as "USD" | "INR")}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USD">USD ($)</SelectItem>
+                        <SelectItem value="INR">INR (₹)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="salaryMax">Salary Max ($)</Label>
-                  <Input id="salaryMax" type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} placeholder="e.g. 120000" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMin">Min ({salaryCurrency === "INR" ? "₹" : "$"})</Label>
+                    <Input id="salaryMin" type="number" value={salaryMin} onChange={(e) => setSalaryMin(e.target.value)} placeholder={salaryCurrency === "INR" ? "e.g. 800000" : "e.g. 80000"} />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="salaryMax">Max ({salaryCurrency === "INR" ? "₹" : "$"})</Label>
+                    <Input id="salaryMax" type="number" value={salaryMax} onChange={(e) => setSalaryMax(e.target.value)} placeholder={salaryCurrency === "INR" ? "e.g. 1500000" : "e.g. 120000"} />
+                  </div>
+                </div>
+                <div className="flex items-center justify-between pt-1">
+                  <div>
+                    <Label htmlFor="hideSalary" className="text-sm">Hide salary from candidates</Label>
+                    <p className="text-xs text-muted-foreground">Candidates won't see this range on the listing</p>
+                  </div>
+                  <Switch id="hideSalary" checked={hideSalary} onCheckedChange={setHideSalary} />
                 </div>
               </div>
 
