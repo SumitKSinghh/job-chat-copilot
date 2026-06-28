@@ -26,6 +26,8 @@ export default function CreateJob() {
   const [experience, setExperience] = useState("");
   const [salaryMin, setSalaryMin] = useState("");
   const [salaryMax, setSalaryMax] = useState("");
+  const [salaryCurrency, setSalaryCurrency] = useState<"USD" | "INR">("USD");
+  const [hideSalary, setHideSalary] = useState(false);
   const [education, setEducation] = useState("");
   const [additionalCriteria, setAdditionalCriteria] = useState("");
   const [additionalQualifications, setAdditionalQualifications] = useState("");
@@ -35,6 +37,7 @@ export default function CreateJob() {
   const [customCriteria, setCustomCriteria] = useState<CustomCriterion[]>([]);
   const [suggesting, setSuggesting] = useState(false);
   const [suggestedSkills, setSuggestedSkills] = useState<string[]>([]);
+  const [suggestingCriteria, setSuggestingCriteria] = useState(false);
 
   const addSkill = (raw?: string) => {
     const value = (raw ?? skillInput).trim();
