@@ -112,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUser(initialSession?.user ?? null);
 
         if (initialSession?.user) {
+          currentUserId = initialSession.user.id;
           const nextRole = await withTimeout(fetchRole(initialSession.user.id), 5000, "Role lookup timed out");
           if (mounted) setRole(nextRole);
         } else {
