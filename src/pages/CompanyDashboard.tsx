@@ -7,10 +7,20 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem,
+  DropdownMenuSeparator, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
   Briefcase, Plus, Users, TrendingUp, LogOut, Eye, Sparkles,
-  MapPin, DollarSign, GraduationCap, Clock, Search, ArrowUpRight, CheckCircle2,
+  DollarSign, GraduationCap, Clock, Search, ArrowUpRight, CheckCircle2,
+  MoreVertical, Pencil, Trash2,
 } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { toast } from "sonner";
 
 interface JobWithStats {
   id: string;
