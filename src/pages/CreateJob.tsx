@@ -370,11 +370,12 @@ export default function CreateJob() {
 
 
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Creating...</> : "Post Job & Generate Questions"}
+                {loading ? <><Loader2 className="w-4 h-4 animate-spin mr-1" /> Saving...</> : (isEdit ? "Save Changes" : "Post Job & Generate Questions")}
               </Button>
             </form>
           </CardContent>
         </Card>
+        )}
       </main>
     </div>
   );
