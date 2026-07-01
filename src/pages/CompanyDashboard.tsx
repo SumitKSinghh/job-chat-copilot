@@ -51,6 +51,22 @@ export default function CompanyDashboard() {
   const [recBreakdown, setRecBreakdown] = useState({ hire: 0, consider: 0, reject: 0 });
 
   const [search, setSearch] = useState("");
+  const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    if (!deleteId) return;
+    setDeleting(true);
+    const { error } = await supabase.from("jobs").delete().eq("id", deleteId);
+    setDeleting(false);
+    if (error) {
+      toast.error(error.message || "Could not delete job");
+      return;
+    }
+    toast.success("Job deleted");
+    setJobs((prev) => prev.filter((j) => j.id !== deleteId));
+    setDeleteId(null);
+  };
 
   useEffect(() => {
     if (!user) return;
