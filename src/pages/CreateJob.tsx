@@ -199,10 +199,15 @@ export default function CreateJob() {
           <ArrowLeft className="w-4 h-4 mr-1" /> Back to Dashboard
         </Button>
 
+        {initializing ? (
+          <Card className="shadow-card"><CardContent className="p-10 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-muted-foreground" />
+          </CardContent></Card>
+        ) : (
         <Card className="shadow-card">
           <CardHeader>
-            <CardTitle className="font-display">Create Job Posting</CardTitle>
-            <CardDescription>Fill in the details and AI will generate interview questions</CardDescription>
+            <CardTitle className="font-display">{isEdit ? "Edit Job Posting" : "Create Job Posting"}</CardTitle>
+            <CardDescription>{isEdit ? "Update the details for this role" : "Fill in the details and AI will generate interview questions"}</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-5">
