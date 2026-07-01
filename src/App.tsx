@@ -46,6 +46,7 @@ function AppRoutes() {
         <Route path="/" element={<Navigate to="/company/dashboard" replace />} />
         <Route path="/company/dashboard" element={<CompanyDashboard />} />
         <Route path="/company/create-job" element={<CreateJob />} />
+        <Route path="/company/edit-job/:jobId" element={<CreateJob />} />
         <Route path="/company/job/:jobId" element={<JobDetail />} />
         <Route path="/company/job/:jobId/compare" element={<CandidateCompare />} />
         <Route path="/company/assistant" element={<RecruitIQAssistant />} />
