@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,10 @@ import { toast } from "sonner";
 export default function CreateJob() {
   const { user, signOut } = useAuth();
   const navigate = useNavigate();
+  const { jobId } = useParams<{ jobId: string }>();
+  const isEdit = Boolean(jobId);
   const [loading, setLoading] = useState(false);
+  const [initializing, setInitializing] = useState(isEdit);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
@@ -98,50 +101,80 @@ export default function CreateJob() {
     }
   };
 
+  useEffect(() => {
+    if (!isEdit || !user) return;
+    (async () => {
+      const { data, error } = await supabase.from("jobs").select("*").eq("id", jobId).maybeSingle();
+      if (error || !data) {
+        toast.error("Could not load job");
+        navigate("/company/dashboard");
+        return;
+      }
+      setTitle(data.title || "");
+      setDescription(data.description || "");
+      setSkills(data.skills || []);
+      setExperience(data.experience || "");
+      setSalaryMin(data.salary_min?.toString() || "");
+      setSalaryMax(data.salary_max?.toString() || "");
+      setSalaryCurrency((data.salary_currency as "USD" | "INR") || "USD");
+      setHideSalary(Boolean(data.hide_salary));
+      setEducation(data.education || "");
+      setAdditionalCriteria(data.additional_criteria || "");
+      setAdditionalQualifications(data.additional_qualifications || "");
+      setInterviewInstructions(data.interview_instructions || "");
+      setCompanyName(data.company_name || "");
+      if (data.ranking_weights) setWeights(data.ranking_weights as any);
+      if (data.custom_criteria) setCustomCriteria(data.custom_criteria as any);
+      setInitializing(false);
+    })();
+  }, [isEdit, jobId, user, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
     setLoading(true);
 
     try {
-      const { data: job, error } = await supabase
-        .from("jobs")
-        .insert({
-          created_by: user.id,
-          title,
-          description,
-          skills,
-          experience: experience || null,
-          salary_min: salaryMin ? parseInt(salaryMin) : null,
-          salary_max: salaryMax ? parseInt(salaryMax) : null,
-          salary_currency: salaryCurrency,
-          hide_salary: hideSalary,
-          education: education || null,
-          additional_criteria: additionalCriteria || null,
-          additional_qualifications: additionalQualifications || null,
-          interview_instructions: interviewInstructions || null,
-          company_name: companyName || null,
-          ranking_weights: weights as any,
-          custom_criteria: customCriteria as any,
-        } as any)
-        .select()
-        .single();
+      const payload = {
+        title,
+        description,
+        skills,
+        experience: experience || null,
+        salary_min: salaryMin ? parseInt(salaryMin) : null,
+        salary_max: salaryMax ? parseInt(salaryMax) : null,
+        salary_currency: salaryCurrency,
+        hide_salary: hideSalary,
+        education: education || null,
+        additional_criteria: additionalCriteria || null,
+        additional_qualifications: additionalQualifications || null,
+        interview_instructions: interviewInstructions || null,
+        company_name: companyName || null,
+        ranking_weights: weights as any,
+        custom_criteria: customCriteria as any,
+      };
 
-      if (error) throw error;
-
-      // Generate questions via AI
-      try {
-        await supabase.functions.invoke("generate-questions", {
-          body: { jobId: job.id },
-        });
-      } catch (aiErr) {
-        console.error("AI question generation failed:", aiErr);
+      if (isEdit) {
+        const { error } = await supabase.from("jobs").update(payload as any).eq("id", jobId!);
+        if (error) throw error;
+        toast.success("Job updated");
+      } else {
+        const { data: job, error } = await supabase
+          .from("jobs")
+          .insert({ created_by: user.id, ...payload } as any)
+          .select()
+          .single();
+        if (error) throw error;
+        // Generate questions via AI
+        try {
+          await supabase.functions.invoke("generate-questions", { body: { jobId: job.id } });
+        } catch (aiErr) {
+          console.error("AI question generation failed:", aiErr);
+        }
+        toast.success("Job posted successfully!");
       }
-
-      toast.success("Job posted successfully!");
       navigate("/company/dashboard");
     } catch (err: any) {
-      toast.error(err.message || "Failed to create job");
+      toast.error(err.message || "Failed to save job");
     } finally {
       setLoading(false);
     }
