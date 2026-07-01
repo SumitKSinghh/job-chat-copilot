@@ -312,17 +312,18 @@ export default function CompanyDashboard() {
               return (
                 <Card
                   key={job.id}
-                  className="group hover:shadow-card-hover hover:border-primary/30 transition-all cursor-pointer flex flex-col"
+                  className="group relative overflow-hidden hover:shadow-card-hover hover:border-primary/40 hover:-translate-y-0.5 transition-all cursor-pointer flex flex-col border-border/60"
                   onClick={() => navigate(`/company/job/${job.id}`)}
                 >
+                  <div className="absolute inset-x-0 top-0 h-1 gradient-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                   <CardContent className="p-6 flex flex-col gap-4 flex-1">
                     {/* Header */}
                     <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap mb-1">
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2 flex-wrap mb-1.5">
                           <Badge
                             variant={job.status === "active" ? "default" : "secondary"}
-                            className="capitalize"
+                            className="capitalize text-[10px] font-medium"
                           >
                             {job.status === "active" && <CheckCircle2 className="w-3 h-3 mr-1" />}
                             {job.status}
@@ -339,7 +340,31 @@ export default function CompanyDashboard() {
                           <p className="text-sm text-muted-foreground truncate">{job.company_name}</p>
                         )}
                       </div>
-                      <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors shrink-0" />
+                      <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                              <MoreVertical className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => navigate(`/company/job/${job.id}`)}>
+                              <Eye className="w-4 h-4 mr-2" /> View candidates
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => navigate(`/company/edit-job/${job.id}`)}>
+                              <Pencil className="w-4 h-4 mr-2" /> Edit job
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem
+                              className="text-destructive focus:text-destructive"
+                              onClick={() => setDeleteId(job.id)}
+                            >
+                              <Trash2 className="w-4 h-4 mr-2" /> Delete
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                        <ArrowUpRight className="w-5 h-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                      </div>
                     </div>
 
                     {/* Meta */}
