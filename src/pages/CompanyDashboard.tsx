@@ -171,7 +171,7 @@ export default function CompanyDashboard() {
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="border-b border-border bg-card sticky top-0 z-10">
+      <header className="border-b border-border/60 bg-card/80 backdrop-blur-md sticky top-0 z-10">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Logo className="h-9 md:h-11" />
@@ -181,7 +181,7 @@ export default function CompanyDashboard() {
             <Button variant="outline" onClick={() => navigate("/company/assistant")}>
               <Sparkles className="w-4 h-4 mr-1" /> AI Assistant
             </Button>
-            <Button onClick={() => navigate("/company/create-job")}>
+            <Button onClick={() => navigate("/company/create-job")} className="shadow-sm">
               <Plus className="w-4 h-4 mr-1" /> Post Job
             </Button>
             <Button variant="ghost" size="sm" onClick={signOut}>
@@ -191,49 +191,68 @@ export default function CompanyDashboard() {
         </div>
       </header>
 
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0 gradient-hero opacity-95" />
+        <div
+          className="absolute inset-0 opacity-[0.15]"
+          style={{
+            backgroundImage:
+              "radial-gradient(circle at 25% 20%, hsl(var(--primary)) 0%, transparent 45%), radial-gradient(circle at 80% 80%, hsl(var(--secondary)) 0%, transparent 40%)",
+          }}
+        />
+        <div className="relative container mx-auto px-4 py-10 md:py-14 text-primary-foreground">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4">
+            <div>
+              <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest opacity-80 mb-2">
+                <Sparkles className="w-3.5 h-3.5" /> Employer Workspace
+              </div>
+              <h1 className="text-3xl md:text-4xl font-display font-bold">
+                Welcome back{user?.email ? `, ${user.email.split("@")[0]}` : ""}.
+              </h1>
+              <p className="mt-2 text-sm md:text-base opacity-80 max-w-xl">
+                Track your roles, review AI-screened candidates, and make faster, smarter hiring decisions.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => navigate("/company/assistant")}>
+                <Sparkles className="w-4 h-4 mr-1" /> Ask AI
+              </Button>
+              <Button onClick={() => navigate("/company/create-job")}>
+                <Plus className="w-4 h-4 mr-1" /> New Job
+              </Button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <main className="container mx-auto px-4 py-8">
         {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Briefcase className="w-6 h-6 text-primary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">{jobs.length}</div>
-                <div className="text-sm text-muted-foreground">Active Jobs</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-secondary/10 flex items-center justify-center">
-                <Users className="w-6 h-6 text-secondary" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">{totalApplicants}</div>
-                <div className="text-sm text-muted-foreground">Total Applicants</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6 flex items-center gap-4">
-              <div className="w-12 h-12 rounded-lg bg-accent/10 flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-accent" />
-              </div>
-              <div>
-                <div className="text-2xl font-bold text-foreground">{avgScore ?? "—"}</div>
-                <div className="text-sm text-muted-foreground">Avg. Match Score</div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-6">
-              <div className="text-sm text-muted-foreground mb-2">AI Recommendations</div>
-              <div className="flex flex-wrap gap-2 text-xs">
-                <span className="px-2 py-1 rounded bg-success/10 text-success font-medium">Hire {recBreakdown.hire}</span>
-                <span className="px-2 py-1 rounded bg-warning/10 text-warning font-medium">Consider {recBreakdown.consider}</span>
-                <span className="px-2 py-1 rounded bg-destructive/10 text-destructive font-medium">Reject {recBreakdown.reject}</span>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8 -mt-14 md:-mt-16 relative">
+          {[
+            { icon: Briefcase, label: "Active Jobs", value: jobs.length, color: "text-primary", bg: "bg-primary/10" },
+            { icon: Users, label: "Total Applicants", value: totalApplicants, color: "text-secondary", bg: "bg-secondary/10" },
+            { icon: TrendingUp, label: "Avg. Match Score", value: avgScore ?? "—", color: "text-accent", bg: "bg-accent/10" },
+          ].map((s) => (
+            <Card key={s.label} className="shadow-card border-border/60 hover:shadow-card-hover transition-shadow">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className={`w-12 h-12 rounded-xl ${s.bg} flex items-center justify-center`}>
+                  <s.icon className={`w-6 h-6 ${s.color}`} />
+                </div>
+                <div>
+                  <div className="text-2xl font-display font-bold text-foreground">{s.value}</div>
+                  <div className="text-xs uppercase tracking-wide text-muted-foreground">{s.label}</div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+          <Card className="shadow-card border-border/60 hover:shadow-card-hover transition-shadow">
+            <CardContent className="p-5">
+              <div className="text-xs uppercase tracking-wide text-muted-foreground mb-2">AI Recommendations</div>
+              <div className="flex flex-wrap gap-1.5 text-xs">
+                <span className="px-2 py-1 rounded-md bg-success/10 text-success font-semibold">Hire {recBreakdown.hire}</span>
+                <span className="px-2 py-1 rounded-md bg-warning/10 text-warning font-semibold">Consider {recBreakdown.consider}</span>
+                <span className="px-2 py-1 rounded-md bg-destructive/10 text-destructive font-semibold">Reject {recBreakdown.reject}</span>
               </div>
             </CardContent>
           </Card>
