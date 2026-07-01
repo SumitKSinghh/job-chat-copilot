@@ -425,7 +425,7 @@ export default function CompanyDashboard() {
                     {/* Actions */}
                     <div className="flex items-center gap-2">
                       <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         className="flex-1"
                         onClick={(e) => { e.stopPropagation(); navigate(`/company/job/${job.id}`); }}
@@ -433,11 +433,11 @@ export default function CompanyDashboard() {
                         <Eye className="w-3.5 h-3.5 mr-1" /> View candidates
                       </Button>
                       <Button
-                        variant="ghost"
+                        variant="outline"
                         size="sm"
-                        onClick={(e) => { e.stopPropagation(); navigate(`/company/job/${job.id}?tab=insights`); }}
+                        onClick={(e) => { e.stopPropagation(); navigate(`/company/edit-job/${job.id}`); }}
                       >
-                        <TrendingUp className="w-3.5 h-3.5 mr-1" /> Insights
+                        <Pencil className="w-3.5 h-3.5 mr-1" /> Edit
                       </Button>
                     </div>
                   </CardContent>
@@ -447,6 +447,27 @@ export default function CompanyDashboard() {
           </div>
         )}
       </main>
+
+      <AlertDialog open={!!deleteId} onOpenChange={(o) => !o && setDeleteId(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete this job?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will permanently remove the posting along with its applications, interviews, and evaluations. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDelete}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting ? "Deleting..." : "Delete job"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
