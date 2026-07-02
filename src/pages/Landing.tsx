@@ -809,6 +809,8 @@ export default function Landing() {
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
             <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
+            <a href="#pilot" className="hover:text-foreground transition-colors">Pilot</a>
+            <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} RecruitIQ. All rights reserved.
