@@ -1,4 +1,4 @@
-import logoAsset from "@/assets/recruitiq-logo.png.asset.json";
+const logoAsset = { url: "/recruitiq-logo.png" };
 import { cn } from "@/lib/utils";
 
 interface LogoProps {
