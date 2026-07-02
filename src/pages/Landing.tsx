@@ -135,6 +135,37 @@ const testimonials = [
 ];
 
 export default function Landing() {
+  const [pilotForm, setPilotForm] = useState({
+    orgName: "",
+    orgSize: "",
+    contact: "",
+    email: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handlePilotSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pilotForm.orgName.trim() || !pilotForm.orgSize || !pilotForm.contact.trim() || !pilotForm.email.trim()) {
+      toast({ title: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(pilotForm.email)) {
+      toast({ title: "Please enter a valid email", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const subject = encodeURIComponent(`Pilot request from ${pilotForm.orgName}`);
+    const body = encodeURIComponent(
+      `Organization: ${pilotForm.orgName}\nSize: ${pilotForm.orgSize}\nContact: ${pilotForm.contact}\nEmail: ${pilotForm.email}`,
+    );
+    window.location.href = `mailto:support@senddot.in?subject=${subject}&body=${body}`;
+    setTimeout(() => {
+      toast({ title: "Thanks! We'll be in touch.", description: "Your pilot request is on its way." });
+      setPilotForm({ orgName: "", orgSize: "", contact: "", email: "" });
+      setSubmitting(false);
+    }, 400);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Navigation */}
