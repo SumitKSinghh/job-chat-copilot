@@ -1,7 +1,18 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Logo } from "@/components/Logo";
 import { Card, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { toast } from "@/hooks/use-toast";
 import { motion } from "framer-motion";
 import {
   ArrowRight,
@@ -16,6 +27,9 @@ import {
   Star,
   ChevronRight,
   Sparkles,
+  Phone,
+  Mail,
+  Rocket,
 } from "lucide-react";
 
 const fadeUp = {
@@ -121,6 +135,37 @@ const testimonials = [
 ];
 
 export default function Landing() {
+  const [pilotForm, setPilotForm] = useState({
+    orgName: "",
+    orgSize: "",
+    contact: "",
+    email: "",
+  });
+  const [submitting, setSubmitting] = useState(false);
+
+  const handlePilotSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pilotForm.orgName.trim() || !pilotForm.orgSize || !pilotForm.contact.trim() || !pilotForm.email.trim()) {
+      toast({ title: "Please fill in all fields", variant: "destructive" });
+      return;
+    }
+    if (!/^\S+@\S+\.\S+$/.test(pilotForm.email)) {
+      toast({ title: "Please enter a valid email", variant: "destructive" });
+      return;
+    }
+    setSubmitting(true);
+    const subject = encodeURIComponent(`Pilot request from ${pilotForm.orgName}`);
+    const body = encodeURIComponent(
+      `Organization: ${pilotForm.orgName}\nSize: ${pilotForm.orgSize}\nContact: ${pilotForm.contact}\nEmail: ${pilotForm.email}`,
+    );
+    window.location.href = `mailto:support@senddot.in?subject=${subject}&body=${body}`;
+    setTimeout(() => {
+      toast({ title: "Thanks! We'll be in touch.", description: "Your pilot request is on its way." });
+      setPilotForm({ orgName: "", orgSize: "", contact: "", email: "" });
+      setSubmitting(false);
+    }, 400);
+  };
+
   return (
     <div className="min-h-screen bg-background text-foreground overflow-x-hidden">
       {/* Navigation */}
@@ -141,6 +186,12 @@ export default function Landing() {
             </a>
             <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Testimonials
+            </a>
+            <a href="#pilot" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Start a Pilot
+            </a>
+            <a href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Contact
             </a>
           </div>
           <div className="flex items-center gap-3">
@@ -519,6 +570,188 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Start a Pilot */}
+      <section id="pilot" className="py-20 md:py-32 bg-muted/20 border-y border-border/60">
+        <div className="container mx-auto px-6">
+          <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto items-center">
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={0}
+              variants={fadeUp}
+            >
+              <span className="text-xs font-semibold uppercase tracking-widest text-primary mb-3 block">
+                Start a Pilot
+              </span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-4">
+                Try RecruitIQ with your team
+              </h2>
+              <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                Run a no-commitment pilot tailored to your hiring workflow. We'll
+                set up your workspace, walk your team through the platform, and
+                help you measure the impact on your hiring cycle.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "Dedicated onboarding specialist",
+                  "Custom job templates for your roles",
+                  "Full access to AI interviews & analytics",
+                  "Personalized results review after 30 days",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3">
+                    <CheckCircle2 className="h-5 w-5 text-secondary shrink-0 mt-0.5" />
+                    <span className="text-sm text-foreground/90">{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            <motion.div
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+              custom={1}
+              variants={fadeUp}
+            >
+              <Card className="border-border/60 shadow-lg">
+                <CardContent className="p-6 md:p-8">
+                  <div className="flex items-center gap-3 mb-6">
+                    <div className="w-10 h-10 rounded-lg gradient-primary flex items-center justify-center">
+                      <Rocket className="h-5 w-5 text-primary-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-display font-semibold text-lg">Request a Pilot</h3>
+                      <p className="text-xs text-muted-foreground">We'll reach out within 1 business day.</p>
+                    </div>
+                  </div>
+                  <form onSubmit={handlePilotSubmit} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="orgName">Name of Organization</Label>
+                      <Input
+                        id="orgName"
+                        value={pilotForm.orgName}
+                        onChange={(e) => setPilotForm({ ...pilotForm, orgName: e.target.value })}
+                        placeholder="Acme Inc."
+                        maxLength={120}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="orgSize">Size of Organization</Label>
+                      <Select
+                        value={pilotForm.orgSize}
+                        onValueChange={(v) => setPilotForm({ ...pilotForm, orgSize: v })}
+                      >
+                        <SelectTrigger id="orgSize">
+                          <SelectValue placeholder="Select company size" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="1-10">1-10 employees</SelectItem>
+                          <SelectItem value="11-50">11-50 employees</SelectItem>
+                          <SelectItem value="51-200">51-200 employees</SelectItem>
+                          <SelectItem value="201-500">201-500 employees</SelectItem>
+                          <SelectItem value="501-1000">501-1000 employees</SelectItem>
+                          <SelectItem value="1000+">1000+ employees</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="contact">Contact Number</Label>
+                      <Input
+                        id="contact"
+                        type="tel"
+                        value={pilotForm.contact}
+                        onChange={(e) => setPilotForm({ ...pilotForm, contact: e.target.value })}
+                        placeholder="+91 98765 43210"
+                        maxLength={20}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={pilotForm.email}
+                        onChange={(e) => setPilotForm({ ...pilotForm, email: e.target.value })}
+                        placeholder="you@company.com"
+                        maxLength={255}
+                      />
+                    </div>
+                    <Button
+                      type="submit"
+                      disabled={submitting}
+                      className="w-full gradient-primary border-0 text-primary-foreground h-11"
+                    >
+                      {submitting ? "Sending..." : "Request Pilot"}
+                      <ArrowRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </form>
+                </CardContent>
+              </Card>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Us */}
+      <section id="contact" className="py-20 md:py-28">
+        <div className="container mx-auto px-6">
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+            custom={0}
+            variants={fadeUp}
+            className="text-center max-w-2xl mx-auto mb-12"
+          >
+            <span className="text-xs font-semibold uppercase tracking-widest text-secondary mb-3 block">
+              Contact Us
+            </span>
+            <h2 className="text-3xl md:text-4xl font-display font-bold tracking-tight mb-4">
+              We'd love to hear from you
+            </h2>
+            <p className="text-muted-foreground text-lg">
+              Questions, feedback, or partnership ideas — reach out anytime.
+            </p>
+          </motion.div>
+
+          <div className="grid sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            <a href="tel:+917609933502" className="group">
+              <Card className="h-full border-border/60 hover:border-primary/30 hover:shadow-card-hover transition-all">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:bg-primary/15 transition-colors">
+                    <Phone className="h-5 w-5 text-primary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">
+                      Phone
+                    </p>
+                    <p className="font-display font-semibold text-lg">+91-7609933502</p>
+                    <p className="text-xs text-muted-foreground mt-1">Mon–Fri, 10am–7pm IST</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+            <a href="mailto:support@senddot.in" className="group">
+              <Card className="h-full border-border/60 hover:border-primary/30 hover:shadow-card-hover transition-all">
+                <CardContent className="p-6 flex items-start gap-4">
+                  <div className="w-11 h-11 rounded-lg bg-secondary/10 flex items-center justify-center shrink-0 group-hover:bg-secondary/15 transition-colors">
+                    <Mail className="h-5 w-5 text-secondary" />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium uppercase tracking-wider text-muted-foreground mb-1">
+                      Email
+                    </p>
+                    <p className="font-display font-semibold text-lg break-all">support@senddot.in</p>
+                    <p className="text-xs text-muted-foreground mt-1">We reply within 24 hours</p>
+                  </div>
+                </CardContent>
+              </Card>
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section className="py-20 md:py-32">
         <div className="container mx-auto px-6">
@@ -576,6 +809,8 @@ export default function Landing() {
             <a href="#features" className="hover:text-foreground transition-colors">Features</a>
             <a href="#how-it-works" className="hover:text-foreground transition-colors">How It Works</a>
             <a href="#testimonials" className="hover:text-foreground transition-colors">Testimonials</a>
+            <a href="#pilot" className="hover:text-foreground transition-colors">Pilot</a>
+            <a href="#contact" className="hover:text-foreground transition-colors">Contact</a>
           </div>
           <p className="text-xs text-muted-foreground">
             © {new Date().getFullYear()} RecruitIQ. All rights reserved.
