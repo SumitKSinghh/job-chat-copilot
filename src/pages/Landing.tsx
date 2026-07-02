@@ -156,6 +156,12 @@ export default function Landing() {
             <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Testimonials
             </a>
+            <a href="#pilot" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Start a Pilot
+            </a>
+            <a href="#contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Contact
+            </a>
           </div>
           <div className="flex items-center gap-3">
             <Link to="/auth?mode=login">
