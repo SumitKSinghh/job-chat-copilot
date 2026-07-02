@@ -80,7 +80,10 @@ export default function AuthPage() {
         </Button>
 
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-3 mb-4">
+          <div
+            className="inline-flex items-center gap-3 mb-4 cursor-pointer hover:opacity-80 transition-opacity"
+            onClick={() => navigate("/")}
+          >
             <Logo className="h-10 md:h-12" />
             <h1 className="text-2xl md:text-3xl font-display font-bold text-foreground">RecruitIQ</h1>
           </div>
