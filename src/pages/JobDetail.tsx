@@ -172,6 +172,7 @@ export default function JobDetail() {
           detailed_feedback: evaluation?.detailed_feedback ?? null,
           resume: resumeInfo,
           weighted_score: weighted || null,
+          profile: profile || null,
         });
       }
       candidateList.sort((a, b) => (b.weighted_score || b.overall_score || 0) - (a.weighted_score || a.overall_score || 0));
