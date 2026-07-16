@@ -49,6 +49,7 @@ interface Candidate {
   detailed_feedback: string | null;
   resume: ResumeInfo | null;
   weighted_score: number | null;
+  profile?: any;
 }
 
 interface QA { question: string; answer: string; }
