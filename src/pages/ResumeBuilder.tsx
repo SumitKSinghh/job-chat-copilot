@@ -8,10 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Upload, Sparkles, Copy, Download, ArrowLeft, FileText, LogOut } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Briefcase, Upload, Sparkles, Copy, Download, ArrowLeft, FileText, LogOut, User } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { TalentProfileEditor } from "@/components/TalentProfileEditor";
 
 interface Job {
   id: string;
