@@ -8,10 +8,12 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Briefcase, Upload, Sparkles, Copy, Download, ArrowLeft, FileText, LogOut } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Briefcase, Upload, Sparkles, Copy, Download, ArrowLeft, FileText, LogOut, User } from "lucide-react";
 import { Logo } from "@/components/Logo";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
+import { TalentProfileEditor } from "@/components/TalentProfileEditor";
 
 interface Job {
   id: string;
@@ -145,16 +147,27 @@ export default function ResumeBuilder() {
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-medium mb-3">
-            <Sparkles className="w-3.5 h-3.5" /> AI Resume Builder
+            <Sparkles className="w-3.5 h-3.5" /> AI Talent Suite
           </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold text-foreground mb-2">
-            Land more interviews with a tailored resume
+            Build your Living Talent Profile
           </h1>
           <p className="text-muted-foreground max-w-xl mx-auto">
-            Pick the job you want, upload your current resume, and our AI rewrites it to match — ATS-optimized and recruiter-ready.
+            A dynamic professional profile backed by AI-verified evidence — not just a static resume.
           </p>
         </div>
 
+        <Tabs defaultValue="profile" className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 mb-6">
+            <TabsTrigger value="profile"><User className="w-4 h-4 mr-1" /> Talent Profile</TabsTrigger>
+            <TabsTrigger value="resume"><FileText className="w-4 h-4 mr-1" /> AI Resume</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="profile">
+            <TalentProfileEditor />
+          </TabsContent>
+
+          <TabsContent value="resume">
         <div className="grid gap-6 lg:grid-cols-2">
           {/* Input */}
           <Card>
@@ -267,6 +280,8 @@ export default function ResumeBuilder() {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
