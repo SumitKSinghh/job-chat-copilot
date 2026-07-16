@@ -280,6 +280,8 @@ export default function ResumeBuilder() {
             </CardContent>
           </Card>
         </div>
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
