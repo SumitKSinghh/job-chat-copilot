@@ -353,6 +353,93 @@ export default function JobDetail() {
             </div>
           )}
 
+          {c.profile && (
+            <div className="mb-4 p-4 rounded-lg border border-primary/30 bg-primary/5">
+              <h4 className="text-sm font-semibold text-foreground mb-3 flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-primary" /> Living Talent Profile
+                {c.profile.profile_refreshed_at && (
+                  <span className="text-xs font-normal text-muted-foreground ml-auto">
+                    Updated {new Date(c.profile.profile_refreshed_at).toLocaleDateString()}
+                  </span>
+                )}
+              </h4>
+
+              {c.profile.performance_stats?.interviews_count > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
+                  {[
+                    ["Overall", c.profile.performance_stats.overall_avg],
+                    ["Communication", c.profile.performance_stats.communication_avg],
+                    ["Technical", c.profile.performance_stats.skills_avg],
+                    ["Interviews", c.profile.performance_stats.interviews_count],
+                  ].map(([label, val]: any) => (
+                    <div key={label} className="rounded-md border border-border bg-card p-2">
+                      <div className="text-xs text-muted-foreground">{label}</div>
+                      <div className="text-lg font-bold text-primary">{val ?? 0}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+              {c.profile.verified_skills?.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-xs uppercase tracking-wide text-muted-foreground mb-2">Verified Skills (AI-evidenced)</p>
+                  <div className="space-y-1.5">
+                    {c.profile.verified_skills.slice(0, 8).map((s: any, i: number) => (
+                      <div key={i} className="flex items-center gap-2 text-xs">
+                        <Badge className="bg-primary/10 text-primary border-primary/30 min-w-[110px] justify-center" variant="outline">{s.name}</Badge>
+                        <Progress value={s.confidence} className="h-1.5 flex-1" />
+                        <span className="font-semibold w-8 text-right">{s.confidence}%</span>
+                        <span className="text-muted-foreground hidden md:inline truncate">{s.evidence}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              <div className="grid gap-3 md:grid-cols-2 text-sm">
+                {c.profile.certifications?.length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Certifications</p>
+                    <div className="flex flex-wrap gap-1">
+                      {c.profile.certifications.map((cert: string, i: number) => <Badge key={i} variant="secondary" className="text-xs">{cert}</Badge>)}
+                    </div>
+                  </div>
+                )}
+                {c.profile.portfolio_links?.length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Portfolio</p>
+                    <div className="flex flex-wrap gap-2">
+                      {c.profile.portfolio_links.map((l: any, i: number) => (
+                        <a key={i} href={l.url} target="_blank" rel="noreferrer" className="text-xs text-primary underline">{l.label}</a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                {c.profile.work_preferences && Object.keys(c.profile.work_preferences).length > 0 && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Work Preferences</p>
+                    <p className="text-xs text-foreground">
+                      {[
+                        c.profile.work_preferences.role_type,
+                        c.profile.work_preferences.location,
+                        c.profile.work_preferences.remote,
+                        c.profile.work_preferences.salary_min && `${c.profile.work_preferences.currency || "USD"} ${c.profile.work_preferences.salary_min}${c.profile.work_preferences.salary_max ? `–${c.profile.work_preferences.salary_max}` : ""}`,
+                      ].filter(Boolean).join(" · ")}
+                    </p>
+                  </div>
+                )}
+                {c.profile.career_goals && (
+                  <div>
+                    <p className="text-xs uppercase tracking-wide text-muted-foreground mb-1">Career Goals</p>
+                    <p className="text-xs text-foreground">{c.profile.career_goals}</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+
+
 
 
           {(c.strengths?.length || c.weaknesses?.length || c.detailed_feedback) && (
