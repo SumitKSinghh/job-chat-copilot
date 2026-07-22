@@ -84,6 +84,7 @@ export default function JobDetail() {
   const [resumePreview, setResumePreview] = useState<ResumeInfo | null>(null);
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showChat, setShowChat] = useState(false);
+  const [strategyCount, setStrategyCount] = useState(0);
 
   const toggleSelect = (id: string) => {
     setSelectedIds((p) => {
