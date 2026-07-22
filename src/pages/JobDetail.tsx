@@ -192,14 +192,36 @@ export default function JobDetail() {
   const analytics = useMemo(() => {
     const total = candidates.length;
     const completed = candidates.filter((c) => c.interview_status === "completed").length;
+    const screened = candidates.filter((c) => c.resume?.analysis_status === "completed" || (c.resume?.extracted_skills?.length || 0) > 0).length;
     const scored = candidates.filter((c) => c.overall_score !== null);
     const avg = scored.length ? Math.round(scored.reduce((s, c) => s + (c.overall_score || 0), 0) / scored.length) : 0;
     const recs = { hire: 0, consider: 0, reject: 0 };
     candidates.forEach((c) => { if (c.recommendation && c.recommendation in recs) (recs as any)[c.recommendation]++; });
     const stages = { applied: 0, interview_completed: 0, shortlisted: 0, rejected: 0 };
     candidates.forEach((c) => { stages[pipelineStage(c)]++; });
-    return { total, completed, avg, recs, stages };
+    const recommended = recs.hire + stages.shortlisted;
+    const offered = candidates.filter((c) => c.status === "offered").length;
+    const joined = candidates.filter((c) => c.status === "joined" || c.status === "hired").length;
+    return { total, completed, screened, avg, recs, stages, recommended, offered, joined };
   }, [candidates]);
+
+  const timelineSteps = useMemo(() => {
+    if (!job) return [];
+    const hasJdAnalysis = !!(job.skills?.length || job.ranking_weights);
+    return [
+      { label: "Job Created", done: true },
+      { label: "AI analyzed JD", done: hasJdAnalysis },
+      { label: "Interview Strategy Generated", count: strategyCount, done: strategyCount > 0 },
+      { label: "Applications", count: analytics.total, done: analytics.total > 0 },
+      { label: "Candidates Screened", count: analytics.screened, done: analytics.screened > 0 },
+      { label: "AI Interviews Completed", count: analytics.completed, done: analytics.completed > 0 },
+      { label: "Recommended", count: analytics.recommended, done: analytics.recommended > 0 },
+      { label: "Hiring Manager Decision", count: analytics.stages.shortlisted, done: analytics.stages.shortlisted > 0 },
+      { label: "Offer", count: analytics.offered, done: analytics.offered > 0 },
+      { label: "Joined", count: analytics.joined, done: analytics.joined > 0 },
+    ];
+  }, [job, strategyCount, analytics]);
+
 
   const handleReject = async () => {
     if (!rejectTarget || !rejectReason.trim()) { toast.error("Please provide a reason"); return; }
