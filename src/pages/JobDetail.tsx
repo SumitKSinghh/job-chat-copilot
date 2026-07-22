@@ -587,6 +587,12 @@ export default function JobDetail() {
         )}
 
 
+        {job && timelineSteps.length > 0 && (
+          <div className="mb-6">
+            <HiringTimeline jobTitle={job.title} steps={timelineSteps} />
+          </div>
+        )}
+
         {/* Analytics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <Card><CardContent className="p-4 flex items-center gap-3">
