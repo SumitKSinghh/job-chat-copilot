@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Checkbox } from "@/components/ui/checkbox";
 import { ArrowLeft, LogOut, User, ChevronDown, ChevronUp, Ban, Star, FileText, Users, CheckCircle2, TrendingUp, Sparkles, GitCompare } from "lucide-react";
 import { Logo } from "@/components/Logo";
+import { HiringTimeline } from "@/components/HiringTimeline";
 import { ResumeIntelligencePanel } from "@/components/ResumeIntelligencePanel";
 import { RecruitIQChat } from "@/components/RecruitIQChat";
 import { toast } from "sonner";
