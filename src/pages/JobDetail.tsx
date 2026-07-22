@@ -107,6 +107,12 @@ export default function JobDetail() {
     const { data: jobData } = await supabase.from("jobs").select("*").eq("id", jobId!).single();
     setJob(jobData);
 
+    const { count: stratCount } = await supabase
+      .from("interview_strategies")
+      .select("*", { count: "exact", head: true })
+      .eq("job_id", jobId!);
+    setStrategyCount(stratCount || 0);
+
     const { data: apps } = await supabase
       .from("applications")
       .select("id, status, candidate_id, rejection_reason")
