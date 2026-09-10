@@ -178,6 +178,9 @@ export default function CompanyDashboard() {
             <span className="font-display font-bold text-lg text-foreground">RecruitIQ</span>
           </div>
           <div className="flex items-center gap-3">
+            <Button variant="outline" onClick={() => navigate("/company/screening")}>
+              <Users className="w-4 h-4 mr-1" /> Bulk Screening
+            </Button>
             <Button variant="outline" onClick={() => navigate("/company/assistant")}>
               <Sparkles className="w-4 h-4 mr-1" /> AI Assistant
             </Button>
@@ -215,6 +218,9 @@ export default function CompanyDashboard() {
               </p>
             </div>
             <div className="flex gap-2">
+              <Button variant="secondary" onClick={() => navigate("/company/screening")}>
+                <Users className="w-4 h-4 mr-1" /> Screen Resumes
+              </Button>
               <Button variant="secondary" onClick={() => navigate("/company/assistant")}>
                 <Sparkles className="w-4 h-4 mr-1" /> Ask AI
               </Button>
