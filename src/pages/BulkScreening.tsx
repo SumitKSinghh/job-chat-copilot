@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -8,9 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
-import {
-  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
-} from "@/components/ui/select";
 import {
   ArrowLeft, Upload, FileText, X, Sparkles, Trophy, AlertTriangle, CheckCircle2, Loader2,
 } from "lucide-react";
@@ -44,8 +41,6 @@ export default function BulkScreening() {
   const navigate = useNavigate();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const [jobs, setJobs] = useState<{ id: string; title: string; description: string | null; skills: string[] | null }[]>([]);
-  const [selectedJobId, setSelectedJobId] = useState<string>("manual");
   const [jobTitle, setJobTitle] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [shortlistCount, setShortlistCount] = useState(3);
@@ -55,28 +50,6 @@ export default function BulkScreening() {
   const [screening, setScreening] = useState(false);
   const [results, setResults] = useState<ScreenedCandidate[] | null>(null);
   const [notes, setNotes] = useState("");
-
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) return;
-      supabase
-        .from("jobs")
-        .select("id, title, description, skills")
-        .eq("created_by", data.user.id)
-        .order("created_at", { ascending: false })
-        .then(({ data: rows }) => rows && setJobs(rows as any));
-    });
-  }, []);
-
-  const pickJob = (id: string) => {
-    setSelectedJobId(id);
-    if (id === "manual") return;
-    const job = jobs.find((j) => j.id === id);
-    if (job) {
-      setJobTitle(job.title);
-      setJobDescription(job.description || "");
-    }
-  };
 
   const extractText = async (file: File): Promise<string> => {
     if (file.type === "application/pdf" || file.name.toLowerCase().endsWith(".pdf")) {
@@ -123,12 +96,11 @@ export default function BulkScreening() {
     setScreening(true);
     setResults(null);
     try {
-      const job = jobs.find((j) => j.id === selectedJobId);
       const { data, error } = await supabase.functions.invoke("screen-resumes", {
         body: {
           jobTitle,
           jobDescription,
-          requiredSkills: job?.skills || [],
+          requiredSkills: [],
           shortlistCount,
           resumes,
         },
@@ -152,7 +124,7 @@ export default function BulkScreening() {
       <header className="border-b border-border bg-card/50 backdrop-blur sticky top-0 z-10">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/company/dashboard")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
               <ArrowLeft className="w-4 h-4" />
             </Button>
             <button onClick={() => navigate("/")} className="flex items-center">
@@ -160,7 +132,7 @@ export default function BulkScreening() {
             </button>
           </div>
           <Badge variant="secondary" className="gap-1">
-            <Sparkles className="w-3 h-3" /> AI Bulk Screening
+            <Sparkles className="w-3 h-3" /> AI Resume Screening
           </Badge>
         </div>
       </header>
@@ -169,26 +141,13 @@ export default function BulkScreening() {
         <div>
           <h1 className="text-2xl font-bold">Bulk Resume Screening</h1>
           <p className="text-sm text-muted-foreground">
-            Describe the role, drop in every resume you received, and let the AI rank and shortlist the best fits.
+            Free for hiring teams — no account needed. Describe the role, drop in every resume you received, and let the AI rank and shortlist the best fits.
           </p>
         </div>
 
         <div className="grid lg:grid-cols-2 gap-6">
           <Card>
             <CardContent className="p-5 space-y-4">
-              <div className="space-y-2">
-                <Label>Use one of your posted jobs</Label>
-                <Select value={selectedJobId} onValueChange={pickJob}>
-                  <SelectTrigger><SelectValue placeholder="Select a job" /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="manual">Write the description manually</SelectItem>
-                    {jobs.map((j) => (
-                      <SelectItem key={j.id} value={j.id}>{j.title}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
               <div className="space-y-2">
                 <Label>Role title</Label>
                 <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="e.g. Senior Backend Engineer" />
