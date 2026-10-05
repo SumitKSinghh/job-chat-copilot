@@ -36,6 +36,7 @@ function AppRoutes() {
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/auth" element={<AuthPage />} />
+        <Route path="/screening" element={<BulkScreening />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     );
@@ -52,6 +53,7 @@ function AppRoutes() {
         <Route path="/company/job/:jobId/compare" element={<CandidateCompare />} />
         <Route path="/company/assistant" element={<RecruitIQAssistant />} />
         <Route path="/company/screening" element={<BulkScreening />} />
+        <Route path="/screening" element={<BulkScreening />} />
         <Route path="/auth" element={<Navigate to="/company/dashboard" replace />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
@@ -65,6 +67,7 @@ function AppRoutes() {
       <Route path="/candidate/dashboard" element={<CandidateDashboard />} />
       <Route path="/interview/:interviewId" element={<InterviewPage />} />
       <Route path="/candidate/resume-builder" element={<ResumeBuilder />} />
+      <Route path="/screening" element={<BulkScreening />} />
       <Route path="/auth" element={<Navigate to="/" replace />} />
       <Route path="*" element={<NotFound />} />
     </Routes>

@@ -187,6 +187,9 @@ export default function Landing() {
             <a href="#testimonials" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Testimonials
             </a>
+            <Link to="/screening" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
+              Resume Screening
+            </Link>
             <a href="#pilot" className="text-sm text-muted-foreground hover:text-foreground transition-colors">
               Start a Pilot
             </a>
@@ -289,6 +292,11 @@ export default function Landing() {
               <Link to="/auth?role=candidate">
                 <Button variant="outline" size="lg" className="h-12 px-8 text-base">
                   I'm Looking for a Job
+                </Button>
+              </Link>
+              <Link to="/screening">
+                <Button variant="outline" size="lg" className="h-12 px-8 text-base">
+                  Screen Resumes Free
                 </Button>
               </Link>
               <a href="#how-it-works">
